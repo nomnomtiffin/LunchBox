@@ -29,12 +29,12 @@ class _TabsState extends State<Tabs> {
     }
 
     return Scaffold(
-      appBar: AppBar(
+      /*appBar: AppBar(
         title: const Text(
           'nom nom - lunch box',
           style: TextStyle(fontFamily: 'Sigmar'),
         ),
-      ),
+      ),*/
       body: activePage,
       bottomNavigationBar: BottomNavigationBar(
         onTap: _selectPage,
