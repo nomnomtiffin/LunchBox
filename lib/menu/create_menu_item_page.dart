@@ -20,7 +20,8 @@ class CreateMenuItemPage extends StatefulWidget {
 class _CreateMenuItemPageState extends State<CreateMenuItemPage> {
   Menu? menu;
   Widget? content;
-  List<Combo> selectedCombo = [];
+  List<Combo> selectedCombos = [];
+
   @override
   Widget build(BuildContext context) {
     menu = DummyMenu.getMenuByDate(widget.selectedDate);
@@ -31,6 +32,9 @@ class _CreateMenuItemPageState extends State<CreateMenuItemPage> {
             Text("Menu for ${DateFormat("d MMM").format(widget.selectedDate)}"),
         actions: [
           TextButton(
+            child: const Text('Add Combo'),
+            style: TextButton.styleFrom(
+                foregroundColor: Theme.of(context).secondaryHeaderColor),
             onPressed: () async {
               await Navigator.of(context).push(MaterialPageRoute(
                   builder: (ctx) => AddComboPage(widget.selectedDate)));
@@ -38,37 +42,41 @@ class _CreateMenuItemPageState extends State<CreateMenuItemPage> {
                 setContent();
               });
             },
-            style: TextButton.styleFrom(
-                foregroundColor: Theme.of(context).secondaryHeaderColor),
-            child: const Text('Add Combo'),
           ),
           TextButton(
+            child: const Text('Edit Combo'),
+            style: TextButton.styleFrom(
+                foregroundColor: Theme.of(context).secondaryHeaderColor),
             onPressed: () async {
-              if (selectedCombo.isEmpty) {
+              if (selectedCombos.isEmpty) {
                 ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                     content: Text("Please select a combo to edit!")));
-              } else if (selectedCombo.length > 1) {
+              } else if (selectedCombos.length > 1) {
                 ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                     content: Text("Please select only one combo to edit!")));
               } else {
                 await Navigator.of(context).push(MaterialPageRoute(
                     builder: (ctx) =>
-                        EditComboPage(widget.selectedDate, selectedCombo[0])));
+                        EditComboPage(widget.selectedDate, selectedCombos[0])));
                 setState(() {
-                  selectedCombo = [];
+                  selectedCombos = [];
                   setContent();
                 });
               }
             },
-            style: TextButton.styleFrom(
-                foregroundColor: Theme.of(context).secondaryHeaderColor),
-            child: const Text('Edit Combo'),
           ),
           TextButton(
-            onPressed: () {},
+            child: const Text('Remove Combo'),
             style: TextButton.styleFrom(
                 foregroundColor: Theme.of(context).secondaryHeaderColor),
-            child: const Text('Remove Combo'),
+            onPressed: () async {
+              if (selectedCombos.isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    content: Text("Please select a combo to delete!")));
+              } else {
+                showAlertDialog(context);
+              }
+            },
           ),
         ],
       ),
@@ -121,7 +129,7 @@ class _CreateMenuItemPageState extends State<CreateMenuItemPage> {
         child: Row(
           children: [
             Checkbox(
-                value: selectedCombo.contains(combo),
+                value: selectedCombos.contains(combo),
                 onChanged: (bool? value) {
                   _onComboSelected(value, combo);
                 }),
@@ -195,10 +203,57 @@ class _CreateMenuItemPageState extends State<CreateMenuItemPage> {
   void _onComboSelected(bool? value, Combo combo) {
     setState(() {
       if (value == null || value == false) {
-        selectedCombo.remove(combo);
+        selectedCombos.remove(combo);
       } else {
-        selectedCombo.add(combo);
+        selectedCombos.add(combo);
       }
     });
+  }
+
+  showAlertDialog(BuildContext context) {
+    // Create button
+    Widget yesButton = TextButton(
+      child: const Text("Yes"),
+      onPressed: () {
+        Menu? menuByDate = DummyMenu.getMenuByDate(widget.selectedDate);
+        var combos = menuByDate!.combos;
+        for (Combo selectedCombo in selectedCombos) {
+          for (Combo combo in combos) {
+            if (combo.comboName == selectedCombo.comboName) {
+              combos.remove(combo);
+              break;
+            }
+          }
+        }
+        DummyMenu.setMenuByDate(widget.selectedDate, menuByDate);
+        setState(() {
+          selectedCombos = [];
+          setContent();
+        });
+        Navigator.of(context).pop();
+      },
+    );
+
+    Widget noButton = TextButton(
+      child: const Text("No"),
+      onPressed: () {
+        Navigator.of(context).pop();
+      },
+    );
+
+    // Create AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: const Text("Remove Combo"),
+      content: const Text("Are you sure?"),
+      actions: [yesButton, noButton],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
   }
 }
