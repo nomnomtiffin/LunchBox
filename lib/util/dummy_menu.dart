@@ -20,18 +20,40 @@ class DummyMenu {
   static MenuItem chickenKosha =
       const MenuItem(id: 8, name: "Chiken Kosha", type: "Non-Veg", price: 70);
   static MenuItem eggCurry =
-      const MenuItem(id: 8, name: "Egg Curry", type: "Non-Veg", price: 70);
+      const MenuItem(id: 9, name: "Egg Curry", type: "Non-Veg", price: 70);
   static MenuItem paneerButterMasala = const MenuItem(
-      id: 9, name: "Paneer Butter Masala", type: "Veg", price: 30);
+      id: 10, name: "Paneer Butter Masala", type: "Veg", price: 30);
   static MenuItem tomatoChutney =
-      const MenuItem(id: 10, name: "Tomato Chutney", type: "Desert", price: 10);
+      const MenuItem(id: 11, name: "Tomato Chutney", type: "Desert", price: 10);
   static MenuItem Rosogolla =
-      const MenuItem(id: 11, name: "Rosogolla", type: "Desert", price: 10);
+      const MenuItem(id: 12, name: "Rosogolla", type: "Desert", price: 10);
 
   static Map<DateTime, Menu> menuMap = {};
 
   static Menu? getMenuByDate(DateTime selectedDate) {
     return menuMap[selectedDate];
+  }
+
+  static void setMenuByDate(DateTime selectedDate, Menu menu) {
+    menuMap[selectedDate] = menu;
+  }
+
+  static List<MenuItem> getAllMenu() {
+    List<MenuItem> menuItems = List.empty(growable: true);
+    menuItems.add(rice);
+    menuItems.add(dal);
+    menuItems.add(aluBhaja);
+    menuItems.add(aluDum);
+    menuItems.add(soyaBean);
+    menuItems.add(echor);
+    menuItems.add(katlaKalia);
+    menuItems.add(chickenKosha);
+    menuItems.add(eggCurry);
+    menuItems.add(paneerButterMasala);
+    menuItems.add(tomatoChutney);
+    menuItems.add(Rosogolla);
+
+    return menuItems;
   }
 
   static Menu getMenu() {

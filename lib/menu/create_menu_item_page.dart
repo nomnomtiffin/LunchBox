@@ -6,22 +6,66 @@ import 'package:lunch_box/model/menu.dart';
 import 'package:lunch_box/model/menu_item.dart';
 import 'package:lunch_box/util/dummy_menu.dart';
 
-class CreateMenuItemPage extends StatelessWidget {
+class CreateMenuItemPage extends StatefulWidget {
   const CreateMenuItemPage({Key? key, required this.selectedDate})
       : super(key: key);
 
   final DateTime selectedDate;
 
   @override
+  State<CreateMenuItemPage> createState() => _CreateMenuItemPageState();
+}
+
+class _CreateMenuItemPageState extends State<CreateMenuItemPage> {
+  Menu? menu;
+  Widget? content;
+  @override
   Widget build(BuildContext context) {
-    Menu? menu = DummyMenu.getMenuByDate(selectedDate);
-    Widget content = Padding(
+    menu = DummyMenu.getMenuByDate(widget.selectedDate);
+
+    return Scaffold(
+      appBar: AppBar(
+        title:
+            Text("Menu for ${DateFormat("d MMM").format(widget.selectedDate)}"),
+        actions: [
+          TextButton(
+            onPressed: () async {
+              await Navigator.of(context).push(MaterialPageRoute(
+                  builder: (ctx) => AddComboPage(widget.selectedDate)));
+              setState(() {
+                setContent();
+              });
+            },
+            style: TextButton.styleFrom(
+                foregroundColor: Theme.of(context).secondaryHeaderColor),
+            child: const Text('Add Combo'),
+          ),
+          TextButton(
+            onPressed: () {},
+            style: TextButton.styleFrom(
+                foregroundColor: Theme.of(context).secondaryHeaderColor),
+            child: const Text('Edit Combo'),
+          ),
+          TextButton(
+            onPressed: () {},
+            style: TextButton.styleFrom(
+                foregroundColor: Theme.of(context).secondaryHeaderColor),
+            child: const Text('Remove Combo'),
+          ),
+        ],
+      ),
+      body: setContent(),
+    );
+  }
+
+  Widget setContent() {
+    content = Padding(
       padding: const EdgeInsets.all(8.0),
       child: Text(
-          "No menu available for the selected date ${DateFormat("d MMM yyy").format(selectedDate)}"),
+          "No menu available for the selected date ${DateFormat("d MMM yyy").format(widget.selectedDate)}"),
     );
     if (menu != null) {
-      DateTime menuDate = menu.menuDate;
+      DateTime menuDate = menu!.menuDate;
       content = SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(8.0),
@@ -32,48 +76,13 @@ class CreateMenuItemPage extends StatelessWidget {
               Text(
                 'Today\'s Menu - ${menuDate.day}-${menuDate.month}-${menuDate.year}',
               ),
-              ...getMenuItems(menu)
+              ...getMenuItems(menu!)
             ],
           ),
         ),
       );
     }
-
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Menu for ${DateFormat("d MMM").format(selectedDate)}"),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context)
-                  .push(MaterialPageRoute(builder: (ctx) => AddComboPage()));
-            },
-            style: TextButton.styleFrom(
-                foregroundColor: Theme.of(context).secondaryHeaderColor),
-            child: const Text('Add Combo'),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(context)
-                  .push(MaterialPageRoute(builder: (ctx) => AddComboPage()));
-            },
-            style: TextButton.styleFrom(
-                foregroundColor: Theme.of(context).secondaryHeaderColor),
-            child: const Text('Edit Combo'),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(context)
-                  .push(MaterialPageRoute(builder: (ctx) => AddComboPage()));
-            },
-            style: TextButton.styleFrom(
-                foregroundColor: Theme.of(context).secondaryHeaderColor),
-            child: const Text('Remove Combo'),
-          ),
-        ],
-      ),
-      body: content,
-    );
+    return content!;
   }
 
   List<Widget> getMenuItems(Menu menu) {

@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lunch_box/tabs.dart';
 
-import 'home_page/my_home_page.dart';
-
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([
@@ -11,7 +9,6 @@ void main() {
   ]).then((fn) {
     runApp(const MyApp());
   });
-
 }
 
 class MyApp extends StatelessWidget {
@@ -29,5 +26,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
-
