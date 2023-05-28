@@ -4,24 +4,35 @@ import 'package:lunch_box/model/menu.dart';
 import 'package:lunch_box/model/menu_item.dart';
 import 'package:lunch_box/util/dummy_menu.dart';
 
-class AddComboPage extends StatefulWidget {
-  const AddComboPage(this.selectedDate, {Key? key}) : super(key: key);
+class EditComboPage extends StatefulWidget {
+  const EditComboPage(this.selectedDate, this.selectedCombo, {Key? key})
+      : super(key: key);
   final DateTime selectedDate;
+  final Combo selectedCombo;
 
   @override
-  State<AddComboPage> createState() => _AddComboPageState();
+  State<EditComboPage> createState() => _EditComboPageState();
 }
 
-class _AddComboPageState extends State<AddComboPage> {
-  List<MenuItem> selectedMenuItems = List.empty(growable: true);
+class _EditComboPageState extends State<EditComboPage> {
+  List<MenuItem> _selectedMenuItems = [];
   final _formKey = GlobalKey<FormState>();
   var _comboName = '';
   int _comboPrice = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedMenuItems = widget.selectedCombo.comboItems;
+    _comboName = widget.selectedCombo.comboName;
+    _comboPrice = widget.selectedCombo.comboPrice;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Add Combo"),
+        title: const Text("Edit Combo"),
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -31,6 +42,7 @@ class _AddComboPageState extends State<AddComboPage> {
             children: [
               TextFormField(
                 maxLength: 50,
+                initialValue: widget.selectedCombo.comboName,
                 decoration: const InputDecoration(
                   label: Text('Combo Name'),
                 ),
@@ -48,6 +60,7 @@ class _AddComboPageState extends State<AddComboPage> {
                 },
               ),
               TextFormField(
+                initialValue: widget.selectedCombo.comboPrice.toString(),
                 keyboardType: TextInputType.number,
                 decoration: const InputDecoration(
                   label: Text('Combo Price'),
@@ -77,7 +90,7 @@ class _AddComboPageState extends State<AddComboPage> {
                   ),
                   ElevatedButton(
                     onPressed: _saveItem,
-                    child: const Text('Add Combo'),
+                    child: const Text('Edit Combo'),
                   )
                 ],
               ),
@@ -94,7 +107,7 @@ class _AddComboPageState extends State<AddComboPage> {
       Combo newCombo = Combo(
           comboName: _comboName,
           comboPrice: _comboPrice,
-          comboItems: selectedMenuItems);
+          comboItems: _selectedMenuItems);
       Menu? menuByDate = DummyMenu.getMenuByDate(widget.selectedDate);
       if (menuByDate == null) {
         List<Combo> combos = [newCombo];
@@ -103,7 +116,14 @@ class _AddComboPageState extends State<AddComboPage> {
             menuItems: List.empty(growable: true),
             combos: combos);
       } else {
-        menuByDate.combos.add(newCombo);
+        var combos = menuByDate.combos;
+        for (Combo combo in combos) {
+          if (combo.comboName == widget.selectedCombo.comboName) {
+            combos.remove(combo);
+            combos.add(newCombo);
+            break;
+          }
+        }
       }
       DummyMenu.setMenuByDate(widget.selectedDate, menuByDate);
       Navigator.pop(context);
@@ -116,7 +136,7 @@ class _AddComboPageState extends State<AddComboPage> {
       rows.add(Row(
         children: [
           Checkbox(
-              value: selectedMenuItems.contains(menuItem),
+              value: _selectedMenuItems.contains(menuItem),
               onChanged: (bool? value) {
                 _onMenuItemSelected(value, menuItem);
               }),
@@ -130,9 +150,9 @@ class _AddComboPageState extends State<AddComboPage> {
   void _onMenuItemSelected(bool? value, MenuItem menuItem) {
     setState(() {
       if (value == null || value == false) {
-        selectedMenuItems.remove(menuItem);
+        _selectedMenuItems.remove(menuItem);
       } else {
-        selectedMenuItems.add(menuItem);
+        _selectedMenuItems.add(menuItem);
       }
     });
   }
