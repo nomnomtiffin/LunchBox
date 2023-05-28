@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:lunch_box/menu/create_menu_item_page.dart';
 
 class CreateMenuPage extends StatelessWidget {
   const CreateMenuPage({Key? key}) : super(key: key);
@@ -14,7 +15,7 @@ class CreateMenuPage extends StatelessWidget {
 
     List<Widget> dates = List.empty(growable: true);
     var count = 0;
-    while (count < 14) {
+    while (count < 15) {
       DateTime selectedDate = startOfPreviousWeek.add(Duration(days: count));
       var onPressedFunction;
       if (selectedDate.weekday != DateTime.saturday &&
@@ -53,6 +54,7 @@ class CreateMenuPage extends StatelessWidget {
   DateTime getDate(DateTime d) => DateTime(d.year, d.month, d.day);
 
   void _createMenuItems(BuildContext context, DateTime selectedDate) {
-    print(DateFormat('d MMM, EEEE').format(selectedDate));
+    Navigator.of(context).push(MaterialPageRoute(
+        builder: (ctx) => CreateMenuItemPage(selectedDate: selectedDate)));
   }
 }

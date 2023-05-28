@@ -28,6 +28,12 @@ class DummyMenu {
   static MenuItem Rosogolla =
       const MenuItem(id: 11, name: "Rosogolla", type: "Desert", price: 10);
 
+  static Map<DateTime, Menu> menuMap = {};
+
+  static Menu? getMenuByDate(DateTime selectedDate) {
+    return menuMap[selectedDate];
+  }
+
   static Menu getMenu() {
     List<MenuItem> menuItems = List.empty(growable: true);
     menuItems.add(rice);
@@ -89,8 +95,11 @@ class DummyMenu {
     combos.add(fishThali);
     combos.add(chickenThali);
 
+    DateTime now = DateTime.now();
+    DateTime currentDate = DateTime(now.year, now.month, now.day);
     Menu menu =
-        Menu(menuDate: DateTime.now(), menuItems: menuItems, combos: combos);
+        Menu(menuDate: currentDate, menuItems: menuItems, combos: combos);
+    menuMap[currentDate] = menu;
     return menu;
   }
 }
