@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:lunch_box/menu/add_combo_page.dart';
+import 'package:lunch_box/menu/copy_menu_page.dart';
 import 'package:lunch_box/menu/edit_combo_page.dart';
 import 'package:lunch_box/model/combo.dart';
 import 'package:lunch_box/model/menu.dart';
@@ -31,6 +32,18 @@ class _CreateMenuItemPageState extends State<CreateMenuItemPage> {
         title:
             Text("Menu for ${DateFormat("d MMM").format(widget.selectedDate)}"),
         actions: [
+          TextButton(
+            child: const Text('Copy'),
+            style: TextButton.styleFrom(
+                foregroundColor: Theme.of(context).secondaryHeaderColor),
+            onPressed: () async {
+              await Navigator.of(context).push(MaterialPageRoute(
+                  builder: (ctx) => CopyMenuPage(widget.selectedDate)));
+              setState(() {
+                setContent();
+              });
+            },
+          ),
           TextButton(
             child: const Text('Add Combo'),
             style: TextButton.styleFrom(
