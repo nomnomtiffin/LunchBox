@@ -91,6 +91,7 @@ class _AddComboPageState extends State<AddComboPage> {
   void _saveItem() {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
+      selectedMenuItems.sort((a, b) => a.order.compareTo(b.order));
       Combo newCombo = Combo(
           comboName: _comboName,
           comboPrice: _comboPrice,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:lunch_box/menu/create_menu_page.dart';
+import 'package:lunch_box/menu/display_menu_items_page.dart';
+import 'package:lunch_box/menu/display_menu_page.dart';
 
 class UserPage extends StatelessWidget {
   const UserPage({super.key});
@@ -26,6 +27,19 @@ class UserPage extends StatelessWidget {
               },
               child: const Text('Create Menu'),
             ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (ctx) => DisplayMenuItemsPage()));
+              },
+              child: const Text('Menu Item'),
+            ),
+            TextButton(
+              onPressed: () {
+                _createMenu(context);
+              },
+              child: const Text('Categories'),
+            ),
           ],
         ),
       ),
@@ -34,6 +48,6 @@ class UserPage extends StatelessWidget {
 
   void _createMenu(BuildContext context) {
     Navigator.of(context)
-        .push(MaterialPageRoute(builder: (ctx) => CreateMenuPage()));
+        .push(MaterialPageRoute(builder: (ctx) => DisplayMenuPage()));
   }
 }
