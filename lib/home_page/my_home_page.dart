@@ -1,20 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lunch_box/model/combo.dart';
 import 'package:lunch_box/model/menu.dart';
 import 'package:lunch_box/model/menu_item.dart';
-import 'package:lunch_box/util/dummy_menu.dart';
+import 'package:lunch_box/provider/menu_provider.dart';
 
-class MyHomePage extends StatefulWidget {
+class MyHomePage extends ConsumerStatefulWidget {
   const MyHomePage({super.key});
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  ConsumerState<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends ConsumerState<MyHomePage> {
   @override
   Widget build(BuildContext context) {
-    Menu menu = DummyMenu.getMenu();
+    Menu menu = ref.watch(menuProvider);
     DateTime menuDate = menu.menuDate;
 
     return SingleChildScrollView(

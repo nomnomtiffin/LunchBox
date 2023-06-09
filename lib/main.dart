@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lunch_box/tabs.dart';
 
 void main() {
@@ -7,7 +8,7 @@ void main() {
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
   ]).then((fn) {
-    runApp(const MyApp());
+    runApp(const ProviderScope(child: MyApp()));
   });
 }
 
