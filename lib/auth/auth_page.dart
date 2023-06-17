@@ -12,7 +12,8 @@ class AuthPage extends ConsumerStatefulWidget {
 class _AuthPageState extends ConsumerState<AuthPage> {
   final _formKey = GlobalKey<FormState>();
   String _phone = '';
-  final TextEditingController phoneController = TextEditingController();
+  final TextEditingController phoneController = TextEditingController(
+      text: "1234567899"); //TODO remove phone number after dev
 
   @override
   void dispose() {

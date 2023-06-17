@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lunch_box/home_page/my_home_page.dart';
 import 'package:lunch_box/provider/auth_provider.dart';
+import 'package:lunch_box/user/admin_user_page.dart';
 import 'package:lunch_box/user/user_page.dart';
 import 'package:lunch_box/user/user_welcome_page.dart';
 
@@ -36,8 +37,10 @@ class _TabsState extends ConsumerState<Tabs> {
     if (_selectedPageIndex == 1) {
       //activePage = UserPage();
       activePage = ref.watch(authProvider.notifier).isSignedIn()
-          ? UserPage()
-          : UserWelcomePage();
+          ? ref.read(authProvider).phoneNumber == '+911234567899'
+              ? const AdminUserPage()
+              : const UserPage()
+          : const UserWelcomePage();
     }
 
     return Scaffold(

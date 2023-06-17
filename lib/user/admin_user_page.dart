@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lunch_box/menu/display_menu_items_page.dart';
 import 'package:lunch_box/menu/display_menu_page.dart';
 import 'package:lunch_box/provider/auth_provider.dart';
 import 'package:lunch_box/tabs.dart';
 
-class UserPage extends ConsumerWidget {
-  const UserPage({super.key});
+class AdminUserPage extends ConsumerWidget {
+  const AdminUserPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -29,8 +30,23 @@ class UserPage extends ConsumerWidget {
               height: 20,
             ),
             TextButton(
-              onPressed: () {},
-              child: const Text('Orders'),
+              onPressed: () {
+                _createMenu(context);
+              },
+              child: const Text('Create Menu'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (ctx) => const DisplayMenuItemsPage()));
+              },
+              child: const Text('Menu Item'),
+            ),
+            TextButton(
+              onPressed: () {
+                _createMenu(context);
+              },
+              child: const Text('Categories'),
             ),
             TextButton(
               onPressed: () async {
