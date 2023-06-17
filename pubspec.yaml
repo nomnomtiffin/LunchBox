@@ -37,6 +37,11 @@ dependencies:
   google_fonts: ^4.0.4
   intl: ^0.18.1
   flutter_riverpod: ^2.3.6
+  firebase_core: ^2.13.1
+  firebase_auth: ^4.6.3
+  pinput: ^2.2.31
+  cloud_firestore: ^4.8.1
+  firebase_auth_web: ^5.5.3
 
 dev_dependencies:
   flutter_test:

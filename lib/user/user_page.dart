@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lunch_box/menu/display_menu_items_page.dart';
 import 'package:lunch_box/menu/display_menu_page.dart';
+import 'package:lunch_box/provider/auth_provider.dart';
+import 'package:lunch_box/tabs.dart';
 
-class UserPage extends StatelessWidget {
+class UserPage extends ConsumerWidget {
   const UserPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -14,9 +17,11 @@ class UserPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            const Text(
-              'Debanjan',
-              style: TextStyle(fontWeight: FontWeight.bold),
+            Text(
+              ref.read(authProvider).name.isEmpty
+                  ? ref.read(authProvider).phoneNumber
+                  : ref.read(authProvider).name,
+              style: const TextStyle(fontWeight: FontWeight.bold),
             ),
             const SizedBox(
               height: 20,
@@ -30,7 +35,7 @@ class UserPage extends StatelessWidget {
             TextButton(
               onPressed: () {
                 Navigator.of(context).push(MaterialPageRoute(
-                    builder: (ctx) => DisplayMenuItemsPage()));
+                    builder: (ctx) => const DisplayMenuItemsPage()));
               },
               child: const Text('Menu Item'),
             ),
@@ -40,6 +45,20 @@ class UserPage extends StatelessWidget {
               },
               child: const Text('Categories'),
             ),
+            TextButton(
+              onPressed: () async {
+                await ref
+                    .read(authProvider.notifier)
+                    .signOutUser(context: context);
+                Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(
+                        builder: (context) => const Tabs(
+                              selectedPage: 1,
+                            )),
+                    (route) => false);
+              },
+              child: const Text('Sign Out'),
+            ),
           ],
         ),
       ),
@@ -48,6 +67,6 @@ class UserPage extends StatelessWidget {
 
   void _createMenu(BuildContext context) {
     Navigator.of(context)
-        .push(MaterialPageRoute(builder: (ctx) => DisplayMenuPage()));
+        .push(MaterialPageRoute(builder: (ctx) => const DisplayMenuPage()));
   }
 }

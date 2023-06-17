@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lunch_box/home_page/my_home_page.dart';
+import 'package:lunch_box/provider/auth_provider.dart';
 import 'package:lunch_box/user/user_page.dart';
+import 'package:lunch_box/user/user_welcome_page.dart';
 
-class Tabs extends StatefulWidget {
-  const Tabs({super.key});
-
+class Tabs extends ConsumerStatefulWidget {
+  const Tabs({required this.selectedPage, super.key});
+  final int selectedPage;
   @override
-  State<Tabs> createState() {
+  ConsumerState<Tabs> createState() {
     return _TabsState();
   }
 }
 
-class _TabsState extends State<Tabs> {
+class _TabsState extends ConsumerState<Tabs> {
   int _selectedPageIndex = 0;
 
   void _selectPage(int index) {
@@ -21,11 +24,20 @@ class _TabsState extends State<Tabs> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _selectedPageIndex = widget.selectedPage;
+  }
+
+  @override
   Widget build(BuildContext context) {
     Widget activePage = const MyHomePage();
 
     if (_selectedPageIndex == 1) {
-      activePage = UserPage();
+      //activePage = UserPage();
+      activePage = ref.watch(authProvider.notifier).isSignedIn()
+          ? UserPage()
+          : UserWelcomePage();
     }
 
     return Scaffold(
