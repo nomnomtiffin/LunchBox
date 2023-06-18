@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lunch_box/model/menu_item.dart';
-import 'package:lunch_box/util/dummy_menu.dart';
+import 'package:lunch_box/provider/menu_factory.dart';
 
 class AddMenuItemPage extends StatefulWidget {
   const AddMenuItemPage({Key? key}) : super(key: key);
@@ -13,7 +13,7 @@ class _AddMenuItemPageState extends State<AddMenuItemPage> {
   final _formKey = GlobalKey<FormState>();
   var _itemName = '';
   int _itemPrice = 0;
-  var _selectedType = DummyMenu.getCategories()[0];
+  var _selectedType = MenuFactory.getCategories()[0];
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +64,7 @@ class _AddMenuItemPageState extends State<AddMenuItemPage> {
                 },
               ),
               DropdownButtonFormField(
-                  items: DummyMenu.getCategories()
+                  items: MenuFactory.getCategories()
                       .map((category) => DropdownMenuItem(
                             child: Text(category),
                             value: category,
@@ -99,18 +99,24 @@ class _AddMenuItemPageState extends State<AddMenuItemPage> {
     );
   }
 
-  void _saveItem() {
+  Future<void> _saveItem() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-      List<MenuItem> menuItems = List.from(DummyMenu.getAllMenu());
+      List<MenuItem> menuItems = List.empty(growable: true);
+      menuItems = await MenuFactory.getAllMenu();
+      int count = 0;
+      if (!menuItems.isEmpty) {
+        count = menuItems.length + 1;
+      }
+
       MenuItem newMenuItem = MenuItem(
-          id: menuItems.length + 1,
+          id: count,
           name: _itemName,
           type: _selectedType,
           price: _itemPrice,
           order: 0);
       menuItems.add(newMenuItem);
-      DummyMenu.setMenuItem(menuItems);
+      MenuFactory.setMenuItem(menuItems);
       Navigator.pop(context);
     }
   }

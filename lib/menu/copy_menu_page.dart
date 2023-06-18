@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:lunch_box/model/menu.dart';
-import 'package:lunch_box/util/dummy_menu.dart';
+import 'package:lunch_box/provider/menu_factory.dart';
 
 class CopyMenuPage extends StatefulWidget {
   const CopyMenuPage(this.originDate, {Key? key}) : super(key: key);
@@ -84,14 +84,14 @@ class _CopyMenuPageState extends State<CopyMenuPage> {
 
   DateTime getDate(DateTime d) => DateTime(d.year, d.month, d.day);
 
-  void _copyMenu() {
-    Menu? menuByDate = DummyMenu.getMenuByDate(_selectedDate);
+  Future<void> _copyMenu() async {
+    Menu? menuByDate = await MenuFactory.getMenuByDate(_selectedDate);
     if (menuByDate != null) {
       Menu newMenu = Menu(
           menuDate: widget.originDate,
           menuItems: List.from(menuByDate.menuItems),
           combos: List.from(menuByDate.combos));
-      DummyMenu.setMenuByDate(widget.originDate, newMenu);
+      MenuFactory.setMenuByDate(widget.originDate, newMenu);
       Navigator.pop(context);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lunch_box/menu/edit_menu_item_page.dart';
-import 'package:lunch_box/util/dummy_menu.dart';
+import 'package:lunch_box/provider/menu_factory.dart';
 
 import '../model/menu_item.dart';
 import 'add_menu_item_page.dart';
@@ -17,8 +17,17 @@ class _DisplayMenuItemsPageState extends State<DisplayMenuItemsPage> {
   List<MenuItem> _selectedMenuItem = [];
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    _menuItems = List.from(DummyMenu.getAllMenu());
+    MenuFactory.getAllMenu().then((value) => {
+          setState(() {
+            _menuItems = List.from(value);
+          })
+        });
     return Scaffold(
       appBar: AppBar(
         title: const Text("Menu Items"),
@@ -31,7 +40,8 @@ class _DisplayMenuItemsPageState extends State<DisplayMenuItemsPage> {
               await Navigator.of(context)
                   .push(MaterialPageRoute(builder: (ctx) => AddMenuItemPage()));
               setState(() {
-                _menuItems = List.from(DummyMenu.getAllMenu());
+                MenuFactory.getAllMenu()
+                    .then((value) => _menuItems = List.from(value));
               });
             },
           ),
@@ -51,7 +61,8 @@ class _DisplayMenuItemsPageState extends State<DisplayMenuItemsPage> {
                     builder: (ctx) => EditMenuItemPage(_selectedMenuItem[0])));
                 setState(() {
                   _selectedMenuItem = [];
-                  _menuItems = List.from(DummyMenu.getAllMenu());
+                  MenuFactory.getAllMenu()
+                      .then((value) => _menuItems = List.from(value));
                 });
               }
             },
@@ -67,7 +78,7 @@ class _DisplayMenuItemsPageState extends State<DisplayMenuItemsPage> {
             MenuItem value = _menuItems.removeAt(oldIndex);
 
             _menuItems.insert(newIndex, value);
-            DummyMenu.setMenuItem(_menuItems);
+            MenuFactory.setMenuItem(_menuItems);
           });
         },
         children: [
@@ -91,8 +102,10 @@ class _DisplayMenuItemsPageState extends State<DisplayMenuItemsPage> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(menuItem.name,
-                        style: const TextStyle(fontWeight: FontWeight.bold),),
+                      Text(
+                        menuItem.name,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
                       Text(menuItem.type),
                     ],
                   ),

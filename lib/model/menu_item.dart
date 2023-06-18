@@ -1,3 +1,8 @@
+import 'package:json_annotation/json_annotation.dart';
+
+part 'menu_item.g.dart';
+
+@JsonSerializable(explicitToJson: true)
 class MenuItem {
   final int id;
   final String name;
@@ -11,4 +16,9 @@ class MenuItem {
       required this.type,
       required this.price,
       required this.order});
+
+  factory MenuItem.fromJson(Map<String, dynamic> json) =>
+      _$MenuItemFromJson(json);
+
+  Map<String, dynamic> toJson() => _$MenuItemToJson(this);
 }

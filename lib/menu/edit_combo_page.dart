@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lunch_box/model/combo.dart';
 import 'package:lunch_box/model/menu.dart';
 import 'package:lunch_box/model/menu_item.dart';
-import 'package:lunch_box/util/dummy_menu.dart';
+import 'package:lunch_box/provider/menu_factory.dart';
 
 class EditComboPage extends StatefulWidget {
   const EditComboPage(this.selectedDate, this.selectedCombo, {Key? key})
@@ -19,6 +19,7 @@ class _EditComboPageState extends State<EditComboPage> {
   final _formKey = GlobalKey<FormState>();
   var _comboName = '';
   int _comboPrice = 0;
+  List<MenuItem> menuItems = List.empty(growable: true);
 
   @override
   void initState() {
@@ -26,6 +27,7 @@ class _EditComboPageState extends State<EditComboPage> {
     _selectedMenuItems = widget.selectedCombo.comboItems;
     _comboName = widget.selectedCombo.comboName;
     _comboPrice = widget.selectedCombo.comboPrice;
+    MenuFactory.getAllMenu().then((value) => populateMenuItem(value));
   }
 
   @override
@@ -101,7 +103,7 @@ class _EditComboPageState extends State<EditComboPage> {
     );
   }
 
-  void _saveItem() {
+  Future<void> _saveItem() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
       _selectedMenuItems.sort((a, b) => a.order.compareTo(b.order));
@@ -109,7 +111,7 @@ class _EditComboPageState extends State<EditComboPage> {
           comboName: _comboName,
           comboPrice: _comboPrice,
           comboItems: _selectedMenuItems);
-      Menu? menuByDate = DummyMenu.getMenuByDate(widget.selectedDate);
+      Menu? menuByDate = await MenuFactory.getMenuByDate(widget.selectedDate);
       if (menuByDate == null) {
         List<Combo> combos = [newCombo];
         menuByDate = Menu(
@@ -126,18 +128,18 @@ class _EditComboPageState extends State<EditComboPage> {
           }
         }
       }
-      DummyMenu.setMenuByDate(widget.selectedDate, menuByDate);
+      MenuFactory.setMenuByDate(widget.selectedDate, menuByDate);
       Navigator.pop(context);
     }
   }
 
   List<Widget> getAllItems() {
     List<Row> rows = List.empty(growable: true);
-    for (MenuItem menuItem in DummyMenu.getAllMenu()) {
+    for (MenuItem menuItem in menuItems) {
       rows.add(Row(
         children: [
           Checkbox(
-              value: _selectedMenuItems.contains(menuItem),
+              value: isMenuItemSelected(_selectedMenuItems, menuItem),
               onChanged: (bool? value) {
                 _onMenuItemSelected(value, menuItem);
               }),
@@ -151,10 +153,37 @@ class _EditComboPageState extends State<EditComboPage> {
   void _onMenuItemSelected(bool? value, MenuItem menuItem) {
     setState(() {
       if (value == null || value == false) {
-        _selectedMenuItems.remove(menuItem);
+        removeMenuItem(_selectedMenuItems, menuItem);
       } else {
         _selectedMenuItems.add(menuItem);
       }
     });
+  }
+
+  populateMenuItem(List<MenuItem> value) {
+    List<MenuItem> tempMeniItems = List.empty(growable: true);
+    for (MenuItem menuItem in value) {
+      tempMeniItems.add(menuItem);
+    }
+    setState(() {
+      menuItems = tempMeniItems;
+    });
+  }
+
+  bool isMenuItemSelected(List<MenuItem> selectedMenuItems, MenuItem menuItem) {
+    for (MenuItem selectedMenuItem in selectedMenuItems) {
+      if (selectedMenuItem.id == menuItem.id) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  void removeMenuItem(List<MenuItem> selectedMenuItems, MenuItem menuItem) {
+    for (MenuItem selectedMenuItem in selectedMenuItems) {
+      if (selectedMenuItem.id == menuItem.id) {
+        _selectedMenuItems.remove(selectedMenuItem);
+      }
+    }
   }
 }

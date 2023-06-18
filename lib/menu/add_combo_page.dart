@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lunch_box/model/combo.dart';
 import 'package:lunch_box/model/menu.dart';
 import 'package:lunch_box/model/menu_item.dart';
-import 'package:lunch_box/util/dummy_menu.dart';
+import 'package:lunch_box/provider/menu_factory.dart';
 
 class AddComboPage extends StatefulWidget {
   const AddComboPage(this.selectedDate, {Key? key}) : super(key: key);
@@ -17,6 +17,14 @@ class _AddComboPageState extends State<AddComboPage> {
   final _formKey = GlobalKey<FormState>();
   var _comboName = '';
   int _comboPrice = 0;
+  List<MenuItem> menuItems = List.empty(growable: true);
+
+  @override
+  void initState() {
+    super.initState();
+    MenuFactory.getAllMenu().then((value) => populateMenuItem(value));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -88,7 +96,7 @@ class _AddComboPageState extends State<AddComboPage> {
     );
   }
 
-  void _saveItem() {
+  Future<void> _saveItem() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
       selectedMenuItems.sort((a, b) => a.order.compareTo(b.order));
@@ -96,7 +104,7 @@ class _AddComboPageState extends State<AddComboPage> {
           comboName: _comboName,
           comboPrice: _comboPrice,
           comboItems: selectedMenuItems);
-      Menu? menuByDate = DummyMenu.getMenuByDate(widget.selectedDate);
+      Menu? menuByDate = await MenuFactory.getMenuByDate(widget.selectedDate);
       if (menuByDate == null) {
         List<Combo> combos = [newCombo];
         menuByDate = Menu(
@@ -106,14 +114,14 @@ class _AddComboPageState extends State<AddComboPage> {
       } else {
         menuByDate.combos.add(newCombo);
       }
-      DummyMenu.setMenuByDate(widget.selectedDate, menuByDate);
+      MenuFactory.setMenuByDate(widget.selectedDate, menuByDate);
       Navigator.pop(context);
     }
   }
 
   List<Widget> getAllItems() {
     List<Row> rows = List.empty(growable: true);
-    for (MenuItem menuItem in DummyMenu.getAllMenu()) {
+    for (MenuItem menuItem in menuItems) {
       rows.add(Row(
         children: [
           Checkbox(
@@ -135,6 +143,16 @@ class _AddComboPageState extends State<AddComboPage> {
       } else {
         selectedMenuItems.add(menuItem);
       }
+    });
+  }
+
+  populateMenuItem(List<MenuItem> value) {
+    List<MenuItem> tempMeniItems = List.empty(growable: true);
+    for (MenuItem menuItem in value) {
+      tempMeniItems.add(menuItem);
+    }
+    setState(() {
+      menuItems = tempMeniItems;
     });
   }
 }

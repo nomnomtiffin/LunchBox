@@ -6,7 +6,7 @@ import 'package:lunch_box/menu/edit_combo_page.dart';
 import 'package:lunch_box/model/combo.dart';
 import 'package:lunch_box/model/menu.dart';
 import 'package:lunch_box/model/menu_item.dart';
-import 'package:lunch_box/util/dummy_menu.dart';
+import 'package:lunch_box/provider/menu_factory.dart';
 
 class CreateMenuPage extends StatefulWidget {
   const CreateMenuPage({Key? key, required this.selectedDate})
@@ -22,11 +22,18 @@ class _CreateMenuPageState extends State<CreateMenuPage> {
   Menu? menu;
   Widget? content;
   List<Combo> selectedCombos = [];
+  bool isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    isLoading = true;
+    MenuFactory.getMenuByDate(widget.selectedDate)
+        .then((value) => setState(() => {loadContent(value)}));
+  }
 
   @override
   Widget build(BuildContext context) {
-    menu = DummyMenu.getMenuByDate(widget.selectedDate);
-
     return Scaffold(
       appBar: AppBar(
         title:
@@ -39,6 +46,7 @@ class _CreateMenuPageState extends State<CreateMenuPage> {
             onPressed: () async {
               await Navigator.of(context).push(MaterialPageRoute(
                   builder: (ctx) => CopyMenuPage(widget.selectedDate)));
+              menu = await MenuFactory.getMenuByDate(widget.selectedDate);
               setState(() {
                 setContent();
               });
@@ -51,6 +59,7 @@ class _CreateMenuPageState extends State<CreateMenuPage> {
             onPressed: () async {
               await Navigator.of(context).push(MaterialPageRoute(
                   builder: (ctx) => AddComboPage(widget.selectedDate)));
+              menu = await MenuFactory.getMenuByDate(widget.selectedDate);
               setState(() {
                 setContent();
               });
@@ -71,6 +80,7 @@ class _CreateMenuPageState extends State<CreateMenuPage> {
                 await Navigator.of(context).push(MaterialPageRoute(
                     builder: (ctx) =>
                         EditComboPage(widget.selectedDate, selectedCombos[0])));
+                menu = await MenuFactory.getMenuByDate(widget.selectedDate);
                 setState(() {
                   selectedCombos = [];
                   setContent();
@@ -98,11 +108,23 @@ class _CreateMenuPageState extends State<CreateMenuPage> {
   }
 
   Widget setContent() {
-    content = Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Text(
-          "No menu available for the selected date ${DateFormat("d MMM yyy").format(widget.selectedDate)}"),
-    );
+    content = isLoading
+        ? const Center(
+            child: SizedBox(
+              child: CircularProgressIndicator(
+                color: Colors.grey,
+              ),
+              height: 50.0,
+              width: 50.0,
+            ),
+          )
+        : Center(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                  "No menu available for the selected date ${DateFormat("d MMM yyy").format(widget.selectedDate)}"),
+            ),
+          );
     if (menu != null) {
       DateTime menuDate = menu!.menuDate;
       content = SingleChildScrollView(
@@ -227,8 +249,8 @@ class _CreateMenuPageState extends State<CreateMenuPage> {
     // Create button
     Widget yesButton = TextButton(
       child: const Text("Yes"),
-      onPressed: () {
-        Menu? menuByDate = DummyMenu.getMenuByDate(widget.selectedDate);
+      onPressed: () async {
+        Menu? menuByDate = await MenuFactory.getMenuByDate(widget.selectedDate);
         var combos = menuByDate!.combos;
         for (Combo selectedCombo in selectedCombos) {
           for (Combo combo in combos) {
@@ -238,7 +260,8 @@ class _CreateMenuPageState extends State<CreateMenuPage> {
             }
           }
         }
-        DummyMenu.setMenuByDate(widget.selectedDate, menuByDate);
+        MenuFactory.setMenuByDate(widget.selectedDate, menuByDate);
+        menu = await MenuFactory.getMenuByDate(widget.selectedDate);
         setState(() {
           selectedCombos = [];
           setContent();
@@ -268,5 +291,10 @@ class _CreateMenuPageState extends State<CreateMenuPage> {
         return alert;
       },
     );
+  }
+
+  loadContent(Menu? value) {
+    menu = value;
+    isLoading = false;
   }
 }
