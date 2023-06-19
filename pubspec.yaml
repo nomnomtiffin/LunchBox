@@ -43,6 +43,7 @@ dependencies:
   cloud_firestore: ^4.8.1
   firebase_auth_web: ^5.5.3
   json_annotation: ^4.8.1
+  customizable_counter: ^1.0.4
 
 dev_dependencies:
   flutter_test:
@@ -72,6 +73,13 @@ flutter:
   # assets:
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
+
+  assets:
+    - assets/images/ChickenThali.jpg
+    - assets/images/CustomThali.jpg
+    - assets/images/EggThali.jpg
+    - assets/images/FishThali.jpg
+    - assets/images/VegThali.jpg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

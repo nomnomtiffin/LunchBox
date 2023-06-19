@@ -29,6 +29,7 @@ class MyApp extends StatelessWidget {
       title: 'nom nom - Lunch Box',
       theme: ThemeData(
         primarySwatch: Colors.orange,
+        unselectedWidgetColor: Colors.orange.shade200,
       ),
       home: const Tabs(selectedPage: 0),
     );
