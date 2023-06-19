@@ -13,10 +13,17 @@ class _AddMenuItemPageState extends State<AddMenuItemPage> {
   final _formKey = GlobalKey<FormState>();
   var _itemName = '';
   int _itemPrice = 0;
-  var _selectedType = MenuFactory.getCategories()[0];
+  var _selectedType = '';
+  List<String> _categories = [];
 
   @override
   Widget build(BuildContext context) {
+    MenuFactory.getCategories().then((value) => {
+          setState(() {
+            _categories = List.from(value);
+            _selectedType = _categories[0];
+          })
+        });
     return Scaffold(
       appBar: AppBar(
         title: const Text("Add Menu Item"),
@@ -64,7 +71,7 @@ class _AddMenuItemPageState extends State<AddMenuItemPage> {
                 },
               ),
               DropdownButtonFormField(
-                  items: MenuFactory.getCategories()
+                  items: _categories
                       .map((category) => DropdownMenuItem(
                             child: Text(category),
                             value: category,

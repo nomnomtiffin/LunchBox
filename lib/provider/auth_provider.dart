@@ -35,8 +35,12 @@ class AuthNotifier extends StateNotifier<AppUser> {
         verificationCompleted: (PhoneAuthCredential phoneAuthCredential) async {
           await _firebaseAuth.signInWithCredential(phoneAuthCredential);
         },
-        verificationFailed: (error) {
-          throw Exception(error.message);
+        verificationFailed: (FirebaseAuthException error) {
+          if (error.code == 'invalid-phone-number') {
+            showSnackBar(context, 'The provided phone number is not valid.');
+          } else {
+            throw error;
+          }
         },
         codeSent: (verificationId, forceResendingToken) {
           Navigator.of(context).push(MaterialPageRoute(
@@ -46,7 +50,8 @@ class AuthNotifier extends StateNotifier<AppUser> {
         codeAutoRetrievalTimeout: (verificationId) {},
       );
     } on FirebaseAuthException catch (e) {
-      showSnackBar(context, e.message.toString());
+      showSnackBar(context,
+          "Error verifying phone number. Error: " + e.message.toString());
     }
     //state = getAppUser();
   }

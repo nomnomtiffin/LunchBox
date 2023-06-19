@@ -29,15 +29,25 @@ class MenuFactory {
   static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   static Map<DateTime, Menu> menuMap = {};
   static List<MenuItem> menuItems = List.empty(growable: true);
-  static Category category =
-      const Category(categories: ['Veg', 'Non-Veg', 'Desert']);
+  static Category categories = const Category(categories: []);
 
-  static List<String> getCategories() {
-    return category.categories;
+  static Future<List<String>> getCategories() async {
+    if (categories.categories.isEmpty) {
+      DocumentSnapshot snapshot =
+          await _firestore.collection("category").doc("categories").get();
+      if (snapshot.exists) {
+        categories = Category.fromJson(snapshot.data() as Map<String, dynamic>);
+      }
+    }
+    return categories.categories;
   }
 
   static void setCategories(List<String> newCategories) {
-    category = Category(categories: newCategories);
+    categories = Category(categories: newCategories);
+    _firestore
+        .collection("category")
+        .doc("categories")
+        .set(categories.toJson());
   }
 
   static Future<Menu?> getMenuByDate(DateTime selectedDate) async {

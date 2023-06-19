@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lunch_box/menu/display_categories_page.dart';
 import 'package:lunch_box/menu/display_menu_items_page.dart';
 import 'package:lunch_box/menu/display_menu_page.dart';
 import 'package:lunch_box/provider/auth_provider.dart';
@@ -44,7 +45,8 @@ class AdminUserPage extends ConsumerWidget {
             ),
             TextButton(
               onPressed: () {
-                _createMenu(context);
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (ctx) => const DisplayCategoriesPage()));
               },
               child: const Text('Categories'),
             ),
