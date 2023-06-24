@@ -6,8 +6,9 @@ import 'package:lunch_box/util/utils.dart';
 import 'package:pinput/pinput.dart';
 
 class OtpPage extends ConsumerStatefulWidget {
-  const OtpPage({required this.verificationId, Key? key}) : super(key: key);
-
+  const OtpPage({required this.verificationId, required this.toPage, Key? key})
+      : super(key: key);
+  final int toPage;
   final String verificationId;
 
   @override
@@ -129,8 +130,8 @@ class _OtpPageState extends ConsumerState<OtpPage> {
             ref.read(authProvider.notifier).stopLoading();
             Navigator.of(context).pushAndRemoveUntil(
                 MaterialPageRoute(
-                    builder: (context) => const Tabs(
-                          selectedPage: 1,
+                    builder: (context) => Tabs(
+                          selectedPage: widget.toPage,
                         )),
                 (route) => false);
           });

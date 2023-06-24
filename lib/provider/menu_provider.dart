@@ -9,19 +9,19 @@ class MenuNotifier extends StateNotifier<Menu> {
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  void getMenu() {
+  Future<void> getMenu() async {
     //if(currentDate == menuDate && state.menuItems.isNotEmpty && state.combos.isNotEmpty)
     if (state.menuItems.isEmpty && state.combos.isEmpty) {
-      _firestore
+      DocumentSnapshot snapshot = await _firestore
           .collection("menu")
           .doc(DateFormat("d-MMM-yyyy").format(DateTime(2023, 6,
               15))) //TODO set the date dynamically based on the current date
-          .get()
-          .then((value) {
-        if (value.exists) {
-          state = Menu.fromJson(value.data() as Map<String, dynamic>);
-        }
-      });
+          .get();
+      if (snapshot.exists) {
+        state = Menu.fromJson(snapshot.data() as Map<String, dynamic>);
+      }
+    } else {
+      return;
     }
   }
 }

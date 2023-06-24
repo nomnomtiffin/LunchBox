@@ -69,8 +69,8 @@ class _TabsState extends ConsumerState<Tabs> {
           ),
           BottomNavigationBarItem(
             icon: ref.watch(orderProvider).totalCount > 0
-                ? Icon(Icons.shopping_cart_rounded)
-                : Icon(Icons.shopping_cart_outlined),
+                ? const Icon(Icons.shopping_cart_rounded)
+                : const Icon(Icons.shopping_cart_outlined),
             label: 'Order',
           ),
         ],

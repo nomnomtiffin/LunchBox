@@ -16,13 +16,10 @@ class OrderNotifier extends StateNotifier<Order> {
     double count = 0;
 
     for (String item in newselectedMenuItem.keys) {
-      print("Item: " + item);
-      print("Value: " + (newselectedMenuItem[item]! > 0).toString());
       if (newselectedMenuItem[item] != null && newselectedMenuItem[item]! > 0) {
         count += newselectedMenuItem[item]!;
       }
     }
-    print("Count:" + count.toString());
     return count;
   }
 
@@ -41,6 +38,7 @@ class OrderNotifier extends StateNotifier<Order> {
       totalCost -= price;
     }
     totalAfterTax = totalCost + (state.tax / 100) * totalCost;
+    totalAfterTax = double.parse(totalAfterTax.toStringAsFixed(2));
     state = state.copyWith(
         selectedMenuItem: newselectedMenuItem,
         totalCount: totalCount,

@@ -3,8 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lunch_box/provider/auth_provider.dart';
 
 class AuthPage extends ConsumerStatefulWidget {
-  const AuthPage({Key? key}) : super(key: key);
-
+  const AuthPage(this.toPage, {Key? key}) : super(key: key);
+  final int toPage;
   @override
   ConsumerState<AuthPage> createState() => _AuthPageState();
 }
@@ -149,7 +149,9 @@ class _AuthPageState extends ConsumerState<AuthPage> {
   void _login() {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-      ref.read(authProvider.notifier).signInUser(context, _phone);
+      ref
+          .read(authProvider.notifier)
+          .signInUser(context, _phone, widget.toPage);
     }
   }
 }

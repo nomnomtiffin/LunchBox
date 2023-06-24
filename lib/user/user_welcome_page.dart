@@ -33,7 +33,7 @@ class UserWelcomePage extends StatelessWidget {
                           child: const Text('Get Started'),
                           onPressed: () {
                             Navigator.of(context).push(MaterialPageRoute(
-                                builder: (ctx) => const AuthPage()));
+                                builder: (ctx) => const AuthPage(1)));
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor:

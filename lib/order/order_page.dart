@@ -4,8 +4,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lunch_box/model/combo.dart';
 import 'package:lunch_box/model/menu.dart';
 import 'package:lunch_box/model/menu_item.dart';
+import 'package:lunch_box/provider/auth_provider.dart';
 import 'package:lunch_box/provider/menu_provider.dart';
 import 'package:lunch_box/provider/order_provider.dart';
+import 'package:lunch_box/tabs.dart';
+
+import '../auth/auth_page.dart';
 
 class OrderPage extends ConsumerStatefulWidget {
   const OrderPage({Key? key}) : super(key: key);
@@ -45,24 +49,56 @@ class _OrderPageState extends ConsumerState<OrderPage> {
                           padding: const EdgeInsets.fromLTRB(20, 8, 20, 8),
                           child: ElevatedButton(
                             onPressed: () {
-                              //TODO if total count > 0 navigate to payment page else navigate to Menu
+                              ref.watch(orderProvider).totalCount > 0
+                                  ? ref
+                                          .watch(authProvider.notifier)
+                                          .isSignedIn()
+                                      ? Navigator.of(context)
+                                          .pushAndRemoveUntil(
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      const Tabs(
+                                                        selectedPage: 0,
+                                                      )),
+                                              (route) => false)
+                                      : Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                              builder: (ctx) =>
+                                                  const AuthPage(2)))
+                                  : Navigator.of(context).pushAndRemoveUntil(
+                                      MaterialPageRoute(
+                                          builder: (context) => const Tabs(
+                                                selectedPage: 0,
+                                              )),
+                                      (route) => false);
                             },
                             child: Padding(
                               padding: const EdgeInsets.all(12.0),
                               child: Text(
                                 ref.watch(orderProvider).totalCount > 0
-                                    ? "Confirm Order"
+                                    ? ref
+                                            .watch(authProvider.notifier)
+                                            .isSignedIn()
+                                        ? "Confirm Order"
+                                        : "Login to Order"
                                     : "Start Ordering",
                                 style: const TextStyle(
                                     color: Colors.white, fontSize: 15),
                               ),
                             ),
                             style: ButtonStyle(
-                                shape: MaterialStateProperty.all<
-                                        RoundedRectangleBorder>(
-                                    RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(100),
-                            ))),
+                              shape: MaterialStateProperty.all<
+                                  RoundedRectangleBorder>(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(100),
+                                ),
+                              ),
+                              backgroundColor:
+                                  ref.watch(authProvider.notifier).isSignedIn()
+                                      ? MaterialStateProperty.all(
+                                          Theme.of(context).primaryColor)
+                                      : MaterialStateProperty.all(Colors.black),
+                            ),
                           ),
                         ),
                       ),

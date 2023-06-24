@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:lunch_box/menu/add_combo_page.dart';
 import 'package:lunch_box/menu/copy_menu_page.dart';
 import 'package:lunch_box/menu/edit_combo_page.dart';
+import 'package:lunch_box/menu/edit_custom_menu_page.dart';
 import 'package:lunch_box/model/combo.dart';
 import 'package:lunch_box/model/menu.dart';
 import 'package:lunch_box/model/menu_item.dart';
@@ -52,52 +53,36 @@ class _CreateMenuPageState extends State<CreateMenuPage> {
               });
             },
           ),
-          TextButton(
-            child: const Text('Add Combo'),
-            style: TextButton.styleFrom(
-                foregroundColor: Theme.of(context).secondaryHeaderColor),
-            onPressed: () async {
-              await Navigator.of(context).push(MaterialPageRoute(
-                  builder: (ctx) => AddComboPage(widget.selectedDate)));
-              menu = await MenuFactory.getMenuByDate(widget.selectedDate);
-              setState(() {
-                setContent();
-              });
+          PopupMenuButton(
+            itemBuilder: (context) {
+              return [
+                const PopupMenuItem(
+                  child: Text('Add Thali'),
+                  value: 0,
+                ),
+                const PopupMenuItem(
+                  child: Text('Edit Thali'),
+                  value: 1,
+                ),
+                const PopupMenuItem(
+                  child: Text('Remove Thali'),
+                  value: 2,
+                ),
+                const PopupMenuItem(
+                  child: Text('Edit Custom Thali'),
+                  value: 3,
+                )
+              ];
             },
-          ),
-          TextButton(
-            child: const Text('Edit Combo'),
-            style: TextButton.styleFrom(
-                foregroundColor: Theme.of(context).secondaryHeaderColor),
-            onPressed: () async {
-              if (selectedCombos.isEmpty) {
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                    content: Text("Please select a combo to edit!")));
-              } else if (selectedCombos.length > 1) {
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                    content: Text("Please select only one combo to edit!")));
-              } else {
-                await Navigator.of(context).push(MaterialPageRoute(
-                    builder: (ctx) =>
-                        EditComboPage(widget.selectedDate, selectedCombos[0])));
-                menu = await MenuFactory.getMenuByDate(widget.selectedDate);
-                setState(() {
-                  selectedCombos = [];
-                  setContent();
-                });
-              }
-            },
-          ),
-          TextButton(
-            child: const Text('Remove Combo'),
-            style: TextButton.styleFrom(
-                foregroundColor: Theme.of(context).secondaryHeaderColor),
-            onPressed: () async {
-              if (selectedCombos.isEmpty) {
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                    content: Text("Please select a combo to delete!")));
-              } else {
-                showAlertDialog(context);
+            onSelected: (value) async {
+              if (value == 0) {
+                await OnClickAddCombo(context);
+              } else if (value == 1) {
+                await onClickEditCombo(context);
+              } else if (value == 2) {
+                onClickRemoveCombo(context);
+              } else if (value == 3) {
+                await onClickEditMenu(context);
               }
             },
           ),
@@ -105,6 +90,54 @@ class _CreateMenuPageState extends State<CreateMenuPage> {
       ),
       body: setContent(),
     );
+  }
+
+  void onClickRemoveCombo(BuildContext context) {
+    if (selectedCombos.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Please select a combo to delete!")));
+    } else {
+      showAlertDialog(context);
+    }
+  }
+
+  onClickEditMenu(BuildContext context) async {
+    await Navigator.of(context).push(MaterialPageRoute(
+        builder: (ctx) => EditCustomMenuPage(
+            widget.selectedDate, menu != null ? menu!.menuItems : [])));
+    menu = await MenuFactory.getMenuByDate(widget.selectedDate);
+    setState(() {
+      selectedCombos = [];
+      setContent();
+    });
+  }
+
+  Future<void> onClickEditCombo(BuildContext context) async {
+    if (selectedCombos.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Please select a combo to edit!")));
+    } else if (selectedCombos.length > 1) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text("Please select only one combo to edit!")));
+    } else {
+      await Navigator.of(context).push(MaterialPageRoute(
+          builder: (ctx) =>
+              EditComboPage(widget.selectedDate, selectedCombos[0])));
+      menu = await MenuFactory.getMenuByDate(widget.selectedDate);
+      setState(() {
+        selectedCombos = [];
+        setContent();
+      });
+    }
+  }
+
+  Future<void> OnClickAddCombo(BuildContext context) async {
+    await Navigator.of(context).push(
+        MaterialPageRoute(builder: (ctx) => AddComboPage(widget.selectedDate)));
+    menu = await MenuFactory.getMenuByDate(widget.selectedDate);
+    setState(() {
+      setContent();
+    });
   }
 
   Widget setContent() {

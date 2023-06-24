@@ -28,7 +28,7 @@ class AuthNotifier extends StateNotifier<AppUser> {
     return state.isLoading;
   }
 
-  void signInUser(BuildContext context, String phoneNumber) async {
+  void signInUser(BuildContext context, String phoneNumber, int toPage) async {
     try {
       await _firebaseAuth.verifyPhoneNumber(
         phoneNumber: phoneNumber,
@@ -44,7 +44,10 @@ class AuthNotifier extends StateNotifier<AppUser> {
         },
         codeSent: (verificationId, forceResendingToken) {
           Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => OtpPage(verificationId: verificationId),
+            builder: (context) => OtpPage(
+              verificationId: verificationId,
+              toPage: toPage,
+            ),
           ));
         },
         codeAutoRetrievalTimeout: (verificationId) {},

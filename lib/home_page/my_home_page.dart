@@ -15,10 +15,16 @@ class MyHomePage extends ConsumerStatefulWidget {
 }
 
 class _MyHomePageState extends ConsumerState<MyHomePage> {
+  bool isLoading = false;
+
   @override
   void initState() {
     super.initState();
-    ref.read(menuProvider.notifier).getMenu();
+    isLoading = true;
+    ref
+        .read(menuProvider.notifier)
+        .getMenu()
+        .then((value) => setState(() => {isLoading = false}));
   }
 
   @override
@@ -26,21 +32,23 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
     Menu menu = ref.watch(menuProvider);
     DateTime menuDate = menu.menuDate;
 
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Text(
-              'Today\'s Menu - ${menuDate.day}-${menuDate.month}-${menuDate.year}',
+    return isLoading
+        ? const Center(child: CircularProgressIndicator())
+        : SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    'Today\'s Menu - ${menuDate.day}-${menuDate.month}-${menuDate.year}',
+                  ),
+                  ...getMenuItems(menu)
+                ],
+              ),
             ),
-            ...getMenuItems(menu)
-          ],
-        ),
-      ),
-    );
+          );
   }
 
   List<Widget> getMenuItems(Menu menu) {
