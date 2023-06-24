@@ -5,6 +5,7 @@ import 'package:lunch_box/model/combo.dart';
 import 'package:lunch_box/model/menu.dart';
 import 'package:lunch_box/model/menu_item.dart';
 import 'package:lunch_box/provider/menu_provider.dart';
+import 'package:lunch_box/provider/order_provider.dart';
 
 class MyHomePage extends ConsumerStatefulWidget {
   const MyHomePage({super.key});
@@ -14,9 +15,12 @@ class MyHomePage extends ConsumerStatefulWidget {
 }
 
 class _MyHomePageState extends ConsumerState<MyHomePage> {
-  Map<String, double> _selectedMenuItem = {};
-  List<String> _selectedCustomMenu = [];
-  double customThaliPrice = 0;
+  @override
+  void initState() {
+    super.initState();
+    ref.read(menuProvider.notifier).getMenu();
+  }
+
   @override
   Widget build(BuildContext context) {
     Menu menu = ref.watch(menuProvider);
@@ -41,6 +45,8 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
 
   List<Widget> getMenuItems(Menu menu) {
     List<Widget> menuItems = List.empty(growable: true);
+    Map<String, double> selectedMenuItem =
+        ref.watch(orderProvider).selectedMenuItem;
 
     //Display Combo
     for (Combo combo in menu.combos) {
@@ -112,7 +118,7 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
                   buttonText: "Add Item",
                   textColor: Colors.white,
                   textSize: 15,
-                  count: 0,
+                  count: selectedMenuItem[combo.comboName] ?? 0,
                   step: 1,
                   minCount: 0,
                   maxCount: 5,
@@ -120,39 +126,21 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
                       const Icon(Icons.add, color: Colors.white, size: 15),
                   decrementIcon:
                       const Icon(Icons.remove, color: Colors.white, size: 15),
-                  onCountChange: (count) {
-                    _selectedMenuItem[combo.comboName] = count;
-                    print(_selectedMenuItem);
+                  onIncrement: (count) {
+                    ref.read(orderProvider.notifier).setSelectedMenuItem(
+                        combo.comboName,
+                        count,
+                        double.parse(combo.comboPrice.toString()),
+                        true);
+                  },
+                  onDecrement: (count) {
+                    ref.read(orderProvider.notifier).setSelectedMenuItem(
+                        combo.comboName,
+                        count,
+                        double.parse(combo.comboPrice.toString()),
+                        false);
                   },
                 ),
-                /*Transform.scale(
-                  scale: 2,
-                  child: Checkbox(
-                    shape: const CircleBorder(),
-                    side: MaterialStateBorderSide.resolveWith(
-                      (Set<MaterialState> states) {
-                        if (states.contains(MaterialState.selected)) {
-                          return BorderSide(
-                              width: 2, color: Theme.of(context).primaryColor);
-                        }
-                        return BorderSide(
-                            width: 1,
-                            color: Theme.of(context).unselectedWidgetColor);
-                      },
-                    ),
-                    activeColor: Theme.of(context).colorScheme.primary,
-                    value: _selectedMenuItem.contains(combo.comboName),
-                    onChanged: (value) {
-                      setState(() {
-                        if (value == null || value == false) {
-                          _selectedMenuItem.remove(combo.comboName);
-                        } else {
-                          _selectedMenuItem.add(combo.comboName);
-                        }
-                      });
-                    },
-                  ),
-                )*/
               ],
             ),
           ),
@@ -204,7 +192,8 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
                       height: 5,
                     ),
                     Text(
-                      '₹ $customThaliPrice',
+                      '₹ ' +
+                          ref.watch(orderProvider).customThaliPrice.toString(),
                       style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Theme.of(context).colorScheme.primary),
@@ -213,20 +202,21 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
                 ),
                 const Spacer(),
                 AbsorbPointer(
-                  absorbing: customThaliPrice < 50,
+                  absorbing: ref.watch(orderProvider).customThaliPrice < 50,
                   child: CustomizableCounter(
-                    borderColor: customThaliPrice < 50
-                        ? Colors.grey
+                    borderColor: ref.watch(orderProvider).customThaliPrice < 50
+                        ? Theme.of(context).disabledColor
                         : Theme.of(context).unselectedWidgetColor,
                     borderWidth: 5,
                     borderRadius: 100,
-                    backgroundColor: customThaliPrice < 50
-                        ? Colors.grey
-                        : Theme.of(context).colorScheme.primary,
+                    backgroundColor:
+                        ref.watch(orderProvider).customThaliPrice < 50
+                            ? Theme.of(context).disabledColor
+                            : Theme.of(context).colorScheme.primary,
                     buttonText: "Add Item",
                     textColor: Colors.white,
                     textSize: 15,
-                    count: 0,
+                    count: selectedMenuItem["Custom Thali"] ?? 0,
                     step: 1,
                     minCount: 0,
                     maxCount: 5,
@@ -234,9 +224,19 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
                         const Icon(Icons.add, color: Colors.white, size: 15),
                     decrementIcon:
                         const Icon(Icons.remove, color: Colors.white, size: 15),
-                    onCountChange: (count) {
-                      _selectedMenuItem["Custom Thali"] = count;
-                      print(_selectedMenuItem);
+                    onIncrement: (count) {
+                      ref.read(orderProvider.notifier).setSelectedMenuItem(
+                          "Custom Thali",
+                          count,
+                          ref.watch(orderProvider).customThaliPrice,
+                          true);
+                    },
+                    onDecrement: (count) {
+                      ref.read(orderProvider.notifier).setSelectedMenuItem(
+                          "Custom Thali",
+                          count,
+                          ref.watch(orderProvider).customThaliPrice,
+                          false);
                     },
                   ),
                 ),
@@ -311,15 +311,22 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
                     },
                   ),
                   activeColor: Theme.of(context).colorScheme.primary,
-                  value: _selectedCustomMenu.contains(menuItem.name),
+                  value: ref
+                      .watch(orderProvider)
+                      .selectedCustomMenu
+                      .contains(menuItem.name),
                   onChanged: (value) {
                     setState(() {
                       if (value == null || value == false) {
-                        _selectedCustomMenu.remove(menuItem.name);
-                        customThaliPrice -= menuItem.price;
+                        ref
+                            .read(orderProvider.notifier)
+                            .setSelectedCustomMenuAndPrice(
+                                menuItem.name, menuItem.price, false);
                       } else {
-                        _selectedCustomMenu.add(menuItem.name);
-                        customThaliPrice += menuItem.price;
+                        ref
+                            .read(orderProvider.notifier)
+                            .setSelectedCustomMenuAndPrice(
+                                menuItem.name, menuItem.price, true);
                       }
                     });
                   },

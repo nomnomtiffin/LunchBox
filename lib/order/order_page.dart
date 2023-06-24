@@ -1,0 +1,385 @@
+import 'package:customizable_counter/customizable_counter.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lunch_box/model/combo.dart';
+import 'package:lunch_box/model/menu.dart';
+import 'package:lunch_box/model/menu_item.dart';
+import 'package:lunch_box/provider/menu_provider.dart';
+import 'package:lunch_box/provider/order_provider.dart';
+
+class OrderPage extends ConsumerStatefulWidget {
+  const OrderPage({Key? key}) : super(key: key);
+
+  @override
+  ConsumerState<OrderPage> createState() => _OrderPageState();
+}
+
+class _OrderPageState extends ConsumerState<OrderPage> {
+  @override
+  void initState() {
+    super.initState();
+    ref.read(menuProvider.notifier).getMenu();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+        padding: EdgeInsets.all(8.0),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const Text(
+                    "Your cart",
+                    style:
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
+                  ),
+                  ...getContent(),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(20, 8, 20, 8),
+                          child: ElevatedButton(
+                            onPressed: () {
+                              //TODO if total count > 0 navigate to payment page else navigate to Menu
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.all(12.0),
+                              child: Text(
+                                ref.watch(orderProvider).totalCount > 0
+                                    ? "Confirm Order"
+                                    : "Start Ordering",
+                                style: const TextStyle(
+                                    color: Colors.white, fontSize: 15),
+                              ),
+                            ),
+                            style: ButtonStyle(
+                                shape: MaterialStateProperty.all<
+                                        RoundedRectangleBorder>(
+                                    RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(100),
+                            ))),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ));
+  }
+
+  List<Widget> getContent() {
+    List<Widget> contents = [];
+
+    if (ref.watch(orderProvider).totalCount > 0) {
+      Menu menu = ref.watch(menuProvider);
+
+      contents.add(Expanded(
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              ...getMenuItems(menu),
+            ],
+          ),
+        ),
+      ));
+      contents.add(Padding(
+        padding: const EdgeInsets.fromLTRB(20, 8, 20, 8),
+        child: Column(
+          children: [
+            Divider(
+              color: Theme.of(context).disabledColor,
+            ),
+            Row(
+              children: [
+                Text("Sub Total:",
+                    style: TextStyle(color: Theme.of(context).disabledColor)),
+                const Spacer(),
+                Text(
+                  '₹ ' + ref.watch(orderProvider).totalPrice.toString(),
+                  style: TextStyle(color: Theme.of(context).disabledColor),
+                )
+              ],
+            ),
+            const SizedBox(
+              height: 5,
+            ),
+            Row(
+              children: [
+                Text("Tax:",
+                    style: TextStyle(color: Theme.of(context).disabledColor)),
+                const Spacer(),
+                Text(
+                  ref.watch(orderProvider).tax.toString() + "%",
+                  style: TextStyle(color: Theme.of(context).disabledColor),
+                )
+              ],
+            ),
+            const SizedBox(
+              height: 5,
+            ),
+            Row(
+              children: [
+                const Text("Total:",
+                    style: TextStyle(fontWeight: FontWeight.bold)),
+                const Spacer(),
+                Text(
+                  '₹ ' + ref.watch(orderProvider).totalAfterTax.toString(),
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.primary),
+                )
+              ],
+            )
+          ],
+        ),
+      ));
+    } else {
+      contents.add(Expanded(
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              const SizedBox(height: 30),
+              Text("No Items in the cart!!",
+                  style: TextStyle(
+                      fontSize: 12.0, color: Theme.of(context).disabledColor)),
+            ],
+          ),
+        ),
+      ));
+    }
+
+    return contents;
+  }
+
+  List<Widget> getMenuItems(Menu menu) {
+    List<Widget> menuItems = List.empty(growable: true);
+    Map<String, double> selectedMenuItem =
+        ref.watch(orderProvider).selectedMenuItem;
+    //Display Combo
+    for (Combo combo in menu.combos) {
+      if (selectedMenuItem.keys.contains(combo.comboName) &&
+          selectedMenuItem[combo.comboName]! > 0) {
+        String comboDescription = '';
+        String comboImageName = combo.comboName.replaceAll(" ", "");
+        for (MenuItem item in combo.comboItems) {
+          if (comboDescription.isNotEmpty) {
+            comboDescription += ', ';
+          }
+          comboDescription += item.name;
+        }
+
+        menuItems.add(Padding(
+          padding: const EdgeInsets.fromLTRB(0.0, 8.0, 0.0, 0.0),
+          child: Card(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: Image.asset(
+                        "assets/images/${comboImageName}.jpg",
+                        width: 60,
+                        height: 60,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        combo.comboName,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(
+                        height: 5,
+                      ),
+                      SizedBox(
+                        width: 200,
+                        child: Text(
+                          comboDescription,
+                          softWrap: true,
+                          style: TextStyle(
+                              fontSize: 12.0,
+                              color: Theme.of(context).disabledColor),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 5,
+                      ),
+                      Text(
+                        '₹ ${combo.comboPrice}',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).colorScheme.primary),
+                      )
+                    ],
+                  ),
+                  const Spacer(),
+                  CustomizableCounter(
+                    borderColor: Theme.of(context).unselectedWidgetColor,
+                    borderWidth: 5,
+                    borderRadius: 100,
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                    buttonText: "Add Item",
+                    textColor: Colors.white,
+                    textSize: 15,
+                    count: selectedMenuItem[combo.comboName]!,
+                    step: 1,
+                    minCount: 0,
+                    maxCount: 5,
+                    incrementIcon:
+                        const Icon(Icons.add, color: Colors.white, size: 15),
+                    decrementIcon:
+                        const Icon(Icons.remove, color: Colors.white, size: 15),
+                    onIncrement: (count) {
+                      ref.read(orderProvider.notifier).setSelectedMenuItem(
+                          combo.comboName,
+                          count,
+                          double.parse(combo.comboPrice.toString()),
+                          true);
+                    },
+                    onDecrement: (count) {
+                      ref.read(orderProvider.notifier).setSelectedMenuItem(
+                          combo.comboName,
+                          count,
+                          double.parse(combo.comboPrice.toString()),
+                          false);
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ));
+      }
+    }
+
+    if (selectedMenuItem.keys.contains("Custom Thali") &&
+        selectedMenuItem["Custom Thali"]! > 0) {
+      String customThaliDescription = '';
+      for (String item in ref.read(orderProvider).selectedCustomMenu) {
+        if (customThaliDescription.isNotEmpty) {
+          customThaliDescription += ', ';
+        }
+        customThaliDescription += item;
+      }
+
+      //Custom Thali
+      menuItems.add(Card(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: Image.asset(
+                        "assets/images/CustomThali.jpg",
+                        width: 60,
+                        height: 60,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        "Make your own Thali",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(
+                        height: 5,
+                      ),
+                      SizedBox(
+                        width: 200,
+                        child: Text(
+                          customThaliDescription,
+                          softWrap: true,
+                          style: TextStyle(
+                              fontSize: 12.0,
+                              color: Theme.of(context).disabledColor),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 5,
+                      ),
+                      Text(
+                        '₹ ' +
+                            ref
+                                .watch(orderProvider)
+                                .customThaliPrice
+                                .toString(),
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).colorScheme.primary),
+                      )
+                    ],
+                  ),
+                  const Spacer(),
+                  AbsorbPointer(
+                    absorbing: ref.watch(orderProvider).customThaliPrice < 50,
+                    child: CustomizableCounter(
+                      borderColor:
+                          ref.watch(orderProvider).customThaliPrice < 50
+                              ? Theme.of(context).disabledColor
+                              : Theme.of(context).unselectedWidgetColor,
+                      borderWidth: 5,
+                      borderRadius: 100,
+                      backgroundColor:
+                          ref.watch(orderProvider).customThaliPrice < 50
+                              ? Theme.of(context).disabledColor
+                              : Theme.of(context).colorScheme.primary,
+                      buttonText: "Add Item",
+                      textColor: Colors.white,
+                      textSize: 15,
+                      count: 0,
+                      step: 1,
+                      minCount: 0,
+                      maxCount: 5,
+                      incrementIcon:
+                          const Icon(Icons.add, color: Colors.white, size: 15),
+                      decrementIcon: const Icon(Icons.remove,
+                          color: Colors.white, size: 15),
+                      onIncrement: (count) {
+                        ref.read(orderProvider.notifier).setSelectedMenuItem(
+                            "Custom Thali",
+                            count,
+                            ref.watch(orderProvider).customThaliPrice,
+                            true);
+                      },
+                      onDecrement: (count) {
+                        ref.read(orderProvider.notifier).setSelectedMenuItem(
+                            "Custom Thali",
+                            count,
+                            ref.watch(orderProvider).customThaliPrice,
+                            false);
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ));
+    }
+
+    return menuItems;
+  }
+}

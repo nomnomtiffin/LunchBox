@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lunch_box/home_page/my_home_page.dart';
+import 'package:lunch_box/order/order_page.dart';
 import 'package:lunch_box/provider/auth_provider.dart';
+import 'package:lunch_box/provider/order_provider.dart';
 import 'package:lunch_box/user/admin_user_page.dart';
 import 'package:lunch_box/user/user_page.dart';
 import 'package:lunch_box/user/user_welcome_page.dart';
@@ -41,6 +43,8 @@ class _TabsState extends ConsumerState<Tabs> {
               ? const AdminUserPage()
               : const UserPage()
           : const UserWelcomePage();
+    } else if (_selectedPageIndex == 2) {
+      activePage = const OrderPage();
     }
 
     return Scaffold(
@@ -54,14 +58,20 @@ class _TabsState extends ConsumerState<Tabs> {
       bottomNavigationBar: BottomNavigationBar(
         onTap: _selectPage,
         currentIndex: _selectedPageIndex,
-        items: const [
-          BottomNavigationBarItem(
+        items: [
+          const BottomNavigationBarItem(
             icon: Icon(Icons.restaurant),
             label: 'Menu',
           ),
-          BottomNavigationBarItem(
+          const BottomNavigationBarItem(
             icon: Icon(Icons.account_box),
             label: 'Account',
+          ),
+          BottomNavigationBarItem(
+            icon: ref.watch(orderProvider).totalCount > 0
+                ? Icon(Icons.shopping_cart_rounded)
+                : Icon(Icons.shopping_cart_outlined),
+            label: 'Order',
           ),
         ],
       ),
