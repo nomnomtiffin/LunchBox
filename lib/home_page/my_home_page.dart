@@ -139,14 +139,16 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
                         combo.comboName,
                         count,
                         double.parse(combo.comboPrice.toString()),
-                        true);
+                        true,
+                        menu.menuDate);
                   },
                   onDecrement: (count) {
                     ref.read(orderProvider.notifier).setSelectedMenuItem(
                         combo.comboName,
                         count,
                         double.parse(combo.comboPrice.toString()),
-                        false);
+                        false,
+                        menu.menuDate);
                   },
                 ),
               ],
@@ -237,14 +239,16 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
                           "Custom Thali",
                           count,
                           ref.watch(orderProvider).customThaliPrice,
-                          true);
+                          true,
+                          menu.menuDate);
                     },
                     onDecrement: (count) {
                       ref.read(orderProvider.notifier).setSelectedMenuItem(
                           "Custom Thali",
                           count,
                           ref.watch(orderProvider).customThaliPrice,
-                          false);
+                          false,
+                          menu.menuDate);
                     },
                   ),
                 ),
@@ -328,13 +332,13 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
                       if (value == null || value == false) {
                         ref
                             .read(orderProvider.notifier)
-                            .setSelectedCustomMenuAndPrice(
-                                menuItem.name, menuItem.price, false);
+                            .setSelectedCustomMenuAndPrice(menuItem.name,
+                                menuItem.price, false, menu.menuDate);
                       } else {
                         ref
                             .read(orderProvider.notifier)
-                            .setSelectedCustomMenuAndPrice(
-                                menuItem.name, menuItem.price, true);
+                            .setSelectedCustomMenuAndPrice(menuItem.name,
+                                menuItem.price, true, menu.menuDate);
                       }
                     });
                   },

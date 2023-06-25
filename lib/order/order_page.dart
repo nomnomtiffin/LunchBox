@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lunch_box/model/combo.dart';
 import 'package:lunch_box/model/menu.dart';
 import 'package:lunch_box/model/menu_item.dart';
+import 'package:lunch_box/order/order_detail_page.dart';
 import 'package:lunch_box/provider/auth_provider.dart';
 import 'package:lunch_box/provider/menu_provider.dart';
 import 'package:lunch_box/provider/order_provider.dart';
@@ -28,7 +29,7 @@ class _OrderPageState extends ConsumerState<OrderPage> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-        padding: EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(8.0),
         child: Row(
           children: [
             Expanded(
@@ -53,24 +54,9 @@ class _OrderPageState extends ConsumerState<OrderPage> {
                                   ? ref
                                           .watch(authProvider.notifier)
                                           .isSignedIn()
-                                      ? Navigator.of(context)
-                                          .pushAndRemoveUntil(
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      const Tabs(
-                                                        selectedPage: 0,
-                                                      )),
-                                              (route) => false)
-                                      : Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                              builder: (ctx) =>
-                                                  const AuthPage(2)))
-                                  : Navigator.of(context).pushAndRemoveUntil(
-                                      MaterialPageRoute(
-                                          builder: (context) => const Tabs(
-                                                selectedPage: 0,
-                                              )),
-                                      (route) => false);
+                                      ? navToConfirmOrder(context)
+                                      : navToAuth(context)
+                                  : navToHomePage(context);
                             },
                             child: Padding(
                               padding: const EdgeInsets.all(12.0),
@@ -80,7 +66,7 @@ class _OrderPageState extends ConsumerState<OrderPage> {
                                             .watch(authProvider.notifier)
                                             .isSignedIn()
                                         ? "Confirm Order"
-                                        : "Login to Order"
+                                        : "Login To Order"
                                     : "Start Ordering",
                                 style: const TextStyle(
                                     color: Colors.white, fontSize: 15),
@@ -109,6 +95,40 @@ class _OrderPageState extends ConsumerState<OrderPage> {
             ),
           ],
         ));
+  }
+
+  Future<dynamic> navToHomePage(BuildContext context) {
+    return Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(
+            builder: (context) => const Tabs(
+                  selectedPage: 0,
+                )),
+        (route) => false);
+  }
+
+  Future<dynamic> navToAuth(BuildContext context) {
+    if (ref.read(orderProvider).fireStoreId.isNotEmpty) {
+      ref
+          .read(orderProvider.notifier)
+          .saveOrder("LoginToOrder", ref.read(orderProvider).fireStoreId);
+    } else {
+      ref.read(orderProvider.notifier).firstTimeSave("LoginToOrder");
+    }
+
+    return Navigator.of(context)
+        .push(MaterialPageRoute(builder: (ctx) => const AuthPage(2)));
+  }
+
+  Future<dynamic> navToConfirmOrder(BuildContext context) {
+    if (ref.read(orderProvider).fireStoreId.isNotEmpty) {
+      ref
+          .read(orderProvider.notifier)
+          .saveOrder("ConfirmOrder", ref.read(orderProvider).fireStoreId);
+    } else {
+      ref.read(orderProvider.notifier).firstTimeSave("ConfirmOrder");
+    }
+    return Navigator.of(context)
+        .push(MaterialPageRoute(builder: (ctx) => const OrderDetailPage()));
   }
 
   List<Widget> getContent() {
@@ -284,14 +304,16 @@ class _OrderPageState extends ConsumerState<OrderPage> {
                           combo.comboName,
                           count,
                           double.parse(combo.comboPrice.toString()),
-                          true);
+                          true,
+                          menu.menuDate);
                     },
                     onDecrement: (count) {
                       ref.read(orderProvider.notifier).setSelectedMenuItem(
                           combo.comboName,
                           count,
                           double.parse(combo.comboPrice.toString()),
-                          false);
+                          false,
+                          menu.menuDate);
                     },
                   ),
                 ],
@@ -397,14 +419,16 @@ class _OrderPageState extends ConsumerState<OrderPage> {
                             "Custom Thali",
                             count,
                             ref.watch(orderProvider).customThaliPrice,
-                            true);
+                            true,
+                            menu.menuDate);
                       },
                       onDecrement: (count) {
                         ref.read(orderProvider.notifier).setSelectedMenuItem(
                             "Custom Thali",
                             count,
                             ref.watch(orderProvider).customThaliPrice,
-                            false);
+                            false,
+                            menu.menuDate);
                       },
                     ),
                   ),

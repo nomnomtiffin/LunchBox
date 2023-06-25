@@ -1,12 +1,14 @@
 import 'dart:core';
 
+import 'package:lunch_box/model/app_address.dart';
+
 class AppUser {
   bool isSigned;
   bool isLoading;
   String uId;
   String phoneNumber;
   String name;
-  String address;
+  AppAddress address;
   String preferredCombo;
 
   AppUser({
@@ -26,7 +28,7 @@ class AppUser {
         uId: map['uId'] ?? '',
         phoneNumber: map['phoneNumber'] ?? '',
         name: map['name'] ?? '',
-        address: map['address'] ?? '',
+        address: AppAddress.fromJson(map['address'] as Map<String, dynamic>),
         preferredCombo: map['preferredCombo'] ?? '');
   }
 
@@ -35,7 +37,7 @@ class AppUser {
       "uId": uId,
       "phoneNumber": phoneNumber,
       "name": name,
-      "address": address,
+      "address": address.toJson(),
       "preferredCombo": preferredCombo,
     };
   }
@@ -46,7 +48,7 @@ class AppUser {
     String? uId,
     String? phoneNumber,
     String? name,
-    String? address,
+    AppAddress? address,
     String? preferredCombo,
   }) =>
       AppUser(

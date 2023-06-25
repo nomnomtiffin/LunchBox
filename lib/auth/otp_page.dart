@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lunch_box/provider/auth_provider.dart';
+import 'package:lunch_box/provider/menu_provider.dart';
+import 'package:lunch_box/provider/order_provider.dart';
 import 'package:lunch_box/tabs.dart';
 import 'package:lunch_box/util/utils.dart';
 import 'package:pinput/pinput.dart';
@@ -121,6 +123,11 @@ class _OtpPageState extends ConsumerState<OtpPage> {
               .then((value) async {
             if (value == true) {
               //user exists in our app
+              if (ref.read(orderProvider).totalCount <= 0) {
+                ref.read(orderProvider.notifier).loadOngoingOrder(
+                    ref.read(authProvider).uId,
+                    ref.read(menuProvider).menuDate);
+              }
             } else {
               //New User
               ref

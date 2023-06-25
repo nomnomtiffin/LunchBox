@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lunch_box/auth/otp_page.dart';
+import 'package:lunch_box/model/app_address.dart';
 import 'package:lunch_box/model/app_user.dart';
 import 'package:lunch_box/util/utils.dart';
 
@@ -14,7 +15,8 @@ class AuthNotifier extends StateNotifier<AppUser> {
             uId: '',
             phoneNumber: '',
             name: '',
-            address: '',
+            address: AppAddress(
+                officeName: "", streetAddress: "", city: "", state: "", zip: 0),
             preferredCombo: ''));
 
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
@@ -97,6 +99,7 @@ class AuthNotifier extends StateNotifier<AppUser> {
     DocumentSnapshot snapshot =
         await _firestore.collection("user").doc(state.uId).get();
     if (snapshot.exists) {
+      state = AppUser.fromMap(snapshot.data() as Map<String, dynamic>);
       return true;
     } else {
       return false;
@@ -119,6 +122,11 @@ class AuthNotifier extends StateNotifier<AppUser> {
     }
   }
 
+  updateUser(String name, AppAddress address) {
+    state = state.copyWith(name: name, address: address);
+    _firestore.collection("user").doc(state.uId).set(state.toMap());
+  }
+
   Future signOutUser({required BuildContext context}) async {
     await _firebaseAuth.signOut();
     state = getAppUser();
@@ -131,7 +139,8 @@ class AuthNotifier extends StateNotifier<AppUser> {
         uId: '',
         phoneNumber: '',
         name: '',
-        address: '',
+        address: AppAddress(
+            officeName: "", streetAddress: "", city: "", state: "", zip: 0),
         preferredCombo: '');
   }
 
