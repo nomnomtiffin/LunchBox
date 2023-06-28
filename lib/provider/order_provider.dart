@@ -89,9 +89,13 @@ class OrderNotifier extends StateNotifier<AppOrder> {
         .then((value) => {state = state.copyWith(fireStoreId: value.id)});
   }
 
-  void saveOrder(String status, String firestoreId) {
-    AppOrder order =
-        state.copyWith(status: status, lastUpdatedDateTime: DateTime.now());
+  void saveOrder(
+      String status, String firestoreId, String phoneNumber, String uId) {
+    AppOrder order = state.copyWith(
+        status: status,
+        lastUpdatedDateTime: DateTime.now(),
+        phoneNumber: phoneNumber,
+        uId: uId);
     _firestore
         .collection("app_order")
         .doc(firestoreId)

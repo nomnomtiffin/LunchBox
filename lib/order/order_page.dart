@@ -1,6 +1,7 @@
 import 'package:customizable_counter/customizable_counter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lunch_box/model/app_user.dart';
 import 'package:lunch_box/model/combo.dart';
 import 'package:lunch_box/model/menu.dart';
 import 'package:lunch_box/model/menu_item.dart';
@@ -108,9 +109,8 @@ class _OrderPageState extends ConsumerState<OrderPage> {
 
   Future<dynamic> navToAuth(BuildContext context) {
     if (ref.read(orderProvider).fireStoreId.isNotEmpty) {
-      ref
-          .read(orderProvider.notifier)
-          .saveOrder("LoginToOrder", ref.read(orderProvider).fireStoreId);
+      ref.read(orderProvider.notifier).saveOrder(
+          "LoginToOrder", ref.read(orderProvider).fireStoreId, '', '');
     } else {
       ref.read(orderProvider.notifier).firstTimeSave("LoginToOrder");
     }
@@ -121,9 +121,12 @@ class _OrderPageState extends ConsumerState<OrderPage> {
 
   Future<dynamic> navToConfirmOrder(BuildContext context) {
     if (ref.read(orderProvider).fireStoreId.isNotEmpty) {
-      ref
-          .read(orderProvider.notifier)
-          .saveOrder("ConfirmOrder", ref.read(orderProvider).fireStoreId);
+      AppUser appUser = ref.read(authProvider);
+      ref.read(orderProvider.notifier).saveOrder(
+          "ConfirmOrder",
+          ref.read(orderProvider).fireStoreId,
+          appUser.phoneNumber,
+          appUser.uId);
     } else {
       ref.read(orderProvider.notifier).firstTimeSave("ConfirmOrder");
     }

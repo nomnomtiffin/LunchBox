@@ -43,58 +43,76 @@ class _OrderDetailPageState extends ConsumerState<OrderDetailPage> {
               Expanded(
                 child: Column(
                   children: [
-                    TextFormField(
-                      initialValue: _name,
-                      maxLength: 50,
-                      decoration: const InputDecoration(
-                        label: Text('Name'),
+                    Card(
+                      child: Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            ...getName(),
+                            ...getText(
+                                "Phone", ref.read(authProvider).phoneNumber),
+                            Row(
+                              children: [
+                                const Text(
+                                  "Delivery Address",
+                                  style: TextStyle(fontSize: 12.0),
+                                ),
+                                const Spacer(),
+                                TextButton(
+                                  child: const Text("Change"),
+                                  onPressed: () {
+                                    showModalBottomSheet(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return ClipRRect(
+                                            borderRadius:
+                                                const BorderRadius.vertical(
+                                                    top: Radius.circular(20),
+                                                    bottom: Radius.zero),
+                                            child: SizedBox(
+                                              height: 500,
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: Column(
+                                                    children: getAddresses()),
+                                              ),
+                                            ),
+                                          );
+                                        });
+                                  },
+                                ),
+                              ],
+                            ),
+                            const SizedBox(
+                              height: 2,
+                            ),
+                            Text(
+                              _selectedAddress!.officeName +
+                                  ", " +
+                                  _selectedAddress!.streetAddress,
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            Row(
+                              children: [
+                                const Text("Don't see your office?",
+                                    style: TextStyle(
+                                      fontSize: 12.0,
+                                    )),
+                                TextButton(
+                                  onPressed: () {},
+                                  child: const Text("Request new address",
+                                      style: TextStyle(
+                                        fontSize: 12.0,
+                                      )),
+                                )
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
-                      validator: (value) {
-                        if (value == null ||
-                            value.isEmpty ||
-                            value.trim().length <= 1 ||
-                            value.trim().length > 50) {
-                          return 'Must be between 1 and 50 characters.';
-                        }
-                        return null;
-                      },
-                      onSaved: (value) {
-                        _name = value!;
-                      },
-                    ),
-                    TextFormField(
-                      enabled: false,
-                      initialValue: ref.read(authProvider).phoneNumber,
-                      decoration: const InputDecoration(
-                        label: Text('Phone'),
-                      ),
-                    ),
-                    DropdownButtonFormField(
-                        isExpanded: true,
-                        items: ref
-                            .read(addressProvider)
-                            .values
-                            .map((address) => DropdownMenuItem(
-                                  child: Text(
-                                    address.officeName +
-                                        ", " +
-                                        address.streetAddress,
-                                    softWrap: true,
-                                  ),
-                                  value: address,
-                                ))
-                            .toList(),
-                        onChanged: (value) {
-                          _selectedAddress = value as AppAddress;
-                        },
-                        value: _selectedAddress),
-                    Row(
-                      children: [
-                        const Text("Don't see your office?"),
-                        TextButton(
-                            onPressed: () {},
-                            child: const Text("Request new address"))
-                      ],
                     ),
                   ],
                 ),
@@ -135,6 +153,36 @@ class _OrderDetailPageState extends ConsumerState<OrderDetailPage> {
     );
   }
 
+  List<Widget> getName() {
+    List<Widget> widgets =
+        _name.trim().isEmpty ? getNameField() : getText("Name", _name);
+    return widgets;
+  }
+
+  List<Widget> getNameField() {
+    List<Widget> widgets = [];
+    widgets.add(TextFormField(
+      initialValue: _name,
+      maxLength: 50,
+      decoration: const InputDecoration(
+        label: Text('Name'),
+      ),
+      validator: (value) {
+        if (value == null ||
+            value.isEmpty ||
+            value.trim().length <= 1 ||
+            value.trim().length > 50) {
+          return 'Must be between 1 and 50 characters.';
+        }
+        return null;
+      },
+      onSaved: (value) {
+        _name = value!;
+      },
+    ));
+    return widgets;
+  }
+
   Future<void> _saveItem() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
@@ -156,5 +204,78 @@ class _OrderDetailPageState extends ConsumerState<OrderDetailPage> {
             (route) => false);
       });
     }
+  }
+
+  List<Widget> getText(String fieldName, String name) {
+    List<Widget> widgets = [];
+    widgets.add(Padding(
+      padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            fieldName,
+            style: const TextStyle(fontSize: 12.0),
+          ),
+          const SizedBox(
+            height: 2,
+          ),
+          Text(
+            name,
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          )
+        ],
+      ),
+    ));
+    return widgets;
+  }
+
+  List<Widget> getAddresses() {
+    List<Widget> widgets = [];
+    for (AppAddress address in ref.read(addressProvider).values) {
+      widgets.add(Card(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    address.officeName,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  SizedBox(
+                    width: 200,
+                    child: Text(
+                      address.streetAddress,
+                      softWrap: true,
+                      style: TextStyle(
+                          fontSize: 12.0,
+                          color: Theme.of(context).disabledColor),
+                    ),
+                  ),
+                ],
+              ),
+              const Spacer(),
+              Radio(
+                value: address,
+                groupValue: _selectedAddress,
+                onChanged: (value) {
+                  setState(() {
+                    _selectedAddress = address;
+                  });
+                  Navigator.of(context).pop();
+                },
+              )
+            ],
+          ),
+        ),
+      ));
+    }
+    return widgets;
   }
 }

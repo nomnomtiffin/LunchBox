@@ -99,6 +99,8 @@ class AuthNotifier extends StateNotifier<AppUser> {
     DocumentSnapshot snapshot =
         await _firestore.collection("user").doc(state.uId).get();
     if (snapshot.exists) {
+      print(snapshot.data());
+      print(snapshot);
       state = AppUser.fromMap(snapshot.data() as Map<String, dynamic>);
       return true;
     } else {
