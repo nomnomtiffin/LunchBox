@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 import 'package:lunch_box/model/category.dart';
+import 'package:lunch_box/model/ingredient.dart';
 import 'package:lunch_box/model/menu.dart';
 import 'package:lunch_box/model/menu_item.dart';
 
@@ -30,6 +31,8 @@ class MenuFactory {
   static Map<DateTime, Menu> menuMap = {};
   static List<MenuItem> menuItems = List.empty(growable: true);
   static Category categories = const Category(categories: []);
+  static final List<String> quantityTypes = ['ml', 'l', 'g', 'kg', 'count'];
+  static List<Ingredient> ingredients = [];
 
   static Future<List<String>> getCategories() async {
     if (categories.categories.isEmpty) {
@@ -99,15 +102,23 @@ class MenuFactory {
     menuItems = newMenuItems;
   }
 
+  static void setIngredient(Ingredient ingredient) {
+    _firestore
+        .collection("ingredient")
+        .doc(ingredient.id.toString())
+        .set(ingredient.toJson())
+        .then((value) => ingredients.add(ingredient))
+        .onError((error, stackTrace) => print(error.toString()));
+  }
+
   static Future<List<MenuItem>> getAllMenu() async {
     if (menuItems.isEmpty) {
-      CollectionReference _collectionRef =
-          await _firestore.collection("menu_item");
+      CollectionReference _collectionRef = _firestore.collection("menu_item");
       QuerySnapshot querySnapshot = await _collectionRef.get();
 
       // Get data from docs and convert map to List
       final allData = querySnapshot.docs.map((doc) => doc.data()!).toList();
-      if (!allData.isEmpty) {
+      if (allData.isNotEmpty) {
         for (Object data in allData) {
           var menuItemMap = data as Map<String, dynamic>;
           var menuItem = MenuItem.fromJson(menuItemMap);
@@ -118,5 +129,24 @@ class MenuFactory {
     }
 
     return menuItems;
+  }
+
+  static Future<List<Ingredient>> getIngredients() async {
+    if (ingredients.isEmpty) {
+      CollectionReference _collectionRef = _firestore.collection("ingredient");
+      QuerySnapshot querySnapshot = await _collectionRef.get();
+
+      // Get data from docs and convert map to List
+      final allData = querySnapshot.docs.map((doc) => doc.data()!).toList();
+      if (allData.isNotEmpty) {
+        for (Object data in allData) {
+          var ingredientMap = data as Map<String, dynamic>;
+          var ingredient = Ingredient.fromJson(ingredientMap);
+          ingredients.add(ingredient);
+        }
+      }
+    }
+
+    return ingredients;
   }
 }

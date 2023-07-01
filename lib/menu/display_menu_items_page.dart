@@ -37,8 +37,8 @@ class _DisplayMenuItemsPageState extends State<DisplayMenuItemsPage> {
             style: TextButton.styleFrom(
                 foregroundColor: Theme.of(context).secondaryHeaderColor),
             onPressed: () async {
-              await Navigator.of(context)
-                  .push(MaterialPageRoute(builder: (ctx) => AddMenuItemPage()));
+              await Navigator.of(context).push(
+                  MaterialPageRoute(builder: (ctx) => const AddMenuItemPage()));
               setState(() {
                 MenuFactory.getAllMenu()
                     .then((value) => _menuItems = List.from(value));
