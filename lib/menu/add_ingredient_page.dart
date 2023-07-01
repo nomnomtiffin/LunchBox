@@ -37,6 +37,7 @@ class _AddIngredientPageState extends State<AddIngredientPage> {
                 maxLength: 50,
                 decoration: const InputDecoration(
                   label: Text('Ingredient Name'),
+                  border: OutlineInputBorder(),
                 ),
                 validator: (value) {
                   if (value == null ||
@@ -100,10 +101,10 @@ class _AddIngredientPageState extends State<AddIngredientPage> {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
       MenuFactory.setIngredient(Ingredient(
-          widget.ingredients != null ? widget.ingredients.length : 0,
-          _itemName,
-          _selectedQuantityType,
-          0));
+          id: widget.ingredients != null ? widget.ingredients.length : 0,
+          name: _itemName,
+          type: _selectedQuantityType,
+          quantity: 0));
 
       Navigator.pop(context);
     }

@@ -6,7 +6,7 @@ import 'package:lunch_box/model/menu.dart';
 import 'package:lunch_box/model/menu_item.dart';
 
 class MenuFactory {
-  static MenuItem rice =
+  /*static MenuItem rice =
       const MenuItem(id: 1, name: "Rice", type: "Veg", price: 10, order: 1);
   static MenuItem dal =
       const MenuItem(id: 2, name: "Dal", type: "Veg", price: 10, order: 2);
@@ -25,7 +25,7 @@ class MenuFactory {
   static MenuItem eggCurry = const MenuItem(
       id: 9, name: "Egg Curry", type: "Non-Veg", price: 70, order: 9);
   static MenuItem paneerButterMasala = const MenuItem(
-      id: 10, name: "Paneer Butter Masala", type: "Veg", price: 30, order: 10);
+      id: 10, name: "Paneer Butter Masala", type: "Veg", price: 30, order: 10);*/
 
   static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   static Map<DateTime, Menu> menuMap = {};
@@ -86,7 +86,8 @@ class MenuFactory {
           name: item.name,
           type: item.type,
           price: item.price,
-          order: counter++);
+          order: counter++,
+          ingredients: item.ingredients);
       _firestore
           .collection("menu_item")
           .doc(newItem.id.toString())

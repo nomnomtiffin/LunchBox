@@ -15,7 +15,7 @@ class MenuNotifier extends StateNotifier<Menu> {
       DocumentSnapshot snapshot = await _firestore
           .collection("menu")
           .doc(DateFormat("d-MMM-yyyy").format(DateTime(2023, 6,
-              15))) //TODO set the date dynamically based on the current date
+              30))) //TODO set the date dynamically based on the current date
           .get();
       if (snapshot.exists) {
         state = Menu.fromJson(snapshot.data() as Map<String, dynamic>);
