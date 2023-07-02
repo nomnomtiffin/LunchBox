@@ -29,73 +29,76 @@ class _OrderPageState extends ConsumerState<OrderPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Row(
-          children: [
-            Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const Text(
-                    "Your cart",
-                    style:
-                        TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
-                  ),
-                  ...getContent(),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.fromLTRB(20, 8, 20, 8),
-                          child: ElevatedButton(
-                            onPressed: () {
-                              ref.watch(orderProvider).totalCount > 0
-                                  ? ref
-                                          .watch(authProvider.notifier)
-                                          .isSignedIn()
-                                      ? navToConfirmOrder(context)
-                                      : navToAuth(context)
-                                  : navToHomePage(context);
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.all(12.0),
-                              child: Text(
+    return SafeArea(
+      child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            children: [
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const Text(
+                      "Your cart",
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold, fontSize: 20.0),
+                    ),
+                    ...getContent(),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.fromLTRB(20, 8, 20, 8),
+                            child: ElevatedButton(
+                              onPressed: () {
                                 ref.watch(orderProvider).totalCount > 0
                                     ? ref
                                             .watch(authProvider.notifier)
                                             .isSignedIn()
-                                        ? "Confirm Order"
-                                        : "Login To Order"
-                                    : "Start Ordering",
-                                style: const TextStyle(
-                                    color: Colors.white, fontSize: 15),
-                              ),
-                            ),
-                            style: ButtonStyle(
-                              shape: MaterialStateProperty.all<
-                                  RoundedRectangleBorder>(
-                                RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(100),
+                                        ? navToConfirmOrder(context)
+                                        : navToAuth(context)
+                                    : navToHomePage(context);
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.all(12.0),
+                                child: Text(
+                                  ref.watch(orderProvider).totalCount > 0
+                                      ? ref
+                                              .watch(authProvider.notifier)
+                                              .isSignedIn()
+                                          ? "Confirm Order"
+                                          : "Login To Order"
+                                      : "Start Ordering",
+                                  style: const TextStyle(
+                                      color: Colors.white, fontSize: 15),
                                 ),
                               ),
-                              backgroundColor:
-                                  ref.watch(authProvider.notifier).isSignedIn()
-                                      ? MaterialStateProperty.all(
-                                          Theme.of(context).primaryColor)
-                                      : MaterialStateProperty.all(Colors.black),
+                              style: ButtonStyle(
+                                shape: MaterialStateProperty.all<
+                                    RoundedRectangleBorder>(
+                                  RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(100),
+                                  ),
+                                ),
+                                backgroundColor: ref
+                                        .watch(authProvider.notifier)
+                                        .isSignedIn()
+                                    ? MaterialStateProperty.all(
+                                        Theme.of(context).primaryColor)
+                                    : MaterialStateProperty.all(Colors.black),
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
-        ));
+            ],
+          )),
+    );
   }
 
   Future<dynamic> navToHomePage(BuildContext context) {
@@ -265,7 +268,7 @@ class _OrderPageState extends ConsumerState<OrderPage> {
                         height: 5,
                       ),
                       SizedBox(
-                        width: 200,
+                        width: 150,
                         child: Text(
                           comboDescription,
                           softWrap: true,

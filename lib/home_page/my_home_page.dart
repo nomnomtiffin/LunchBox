@@ -34,18 +34,20 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
 
     return isLoading
         ? const Center(child: CircularProgressIndicator())
-        : SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    'Today\'s Menu - ${menuDate.day}-${menuDate.month}-${menuDate.year}',
-                  ),
-                  ...getMenuItems(menu)
-                ],
+        : SafeArea(
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      'Today\'s Menu - ${menuDate.day}-${menuDate.month}-${menuDate.year}',
+                    ),
+                    ...getMenuItems(menu)
+                  ],
+                ),
               ),
             ),
           );
@@ -97,7 +99,7 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
                       height: 5,
                     ),
                     SizedBox(
-                      width: 200,
+                      width: 150,
                       child: Text(
                         comboDescription,
                         softWrap: true,
@@ -189,7 +191,7 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
                       height: 5,
                     ),
                     SizedBox(
-                      width: 200,
+                      width: 150,
                       child: Text(
                         "Minimum thali amount should be ₹50",
                         softWrap: true,
