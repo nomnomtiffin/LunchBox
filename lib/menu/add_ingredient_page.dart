@@ -14,6 +14,7 @@ class _AddIngredientPageState extends State<AddIngredientPage> {
   var _itemName = '';
   final List<String> quantityTypes = MenuFactory.quantityTypes;
   var _selectedQuantityType = '';
+  bool isBulk = false;
 
   @override
   void initState() {
@@ -72,6 +73,22 @@ class _AddIngredientPageState extends State<AddIngredientPage> {
                     _selectedQuantityType = value as String;
                   },
                   value: _selectedQuantityType),
+              Row(
+                children: [
+                  const Text("Bulk item: "),
+                  const SizedBox(
+                    width: 5,
+                  ),
+                  Checkbox(
+                    value: isBulk,
+                    onChanged: (value) {
+                      setState(() {
+                        isBulk = value ?? false;
+                      });
+                    },
+                  ),
+                ],
+              ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Row(
@@ -104,7 +121,8 @@ class _AddIngredientPageState extends State<AddIngredientPage> {
           id: widget.ingredients != null ? widget.ingredients.length : 0,
           name: _itemName,
           type: _selectedQuantityType,
-          quantity: 0));
+          quantity: 0,
+          bulk: isBulk));
 
       Navigator.pop(context);
     }

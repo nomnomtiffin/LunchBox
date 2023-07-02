@@ -31,65 +31,67 @@ class _AddComboPageState extends State<AddComboPage> {
       appBar: AppBar(
         title: const Text("Add Combo"),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              TextFormField(
-                maxLength: 50,
-                decoration: const InputDecoration(
-                  label: Text('Combo Name'),
-                ),
-                validator: (value) {
-                  if (value == null ||
-                      value.isEmpty ||
-                      value.trim().length <= 1 ||
-                      value.trim().length > 50) {
-                    return 'Must be between 1 and 50 characters.';
-                  }
-                  return null;
-                },
-                onSaved: (value) {
-                  _comboName = value!;
-                },
-              ),
-              TextFormField(
-                keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                  label: Text('Combo Price'),
-                ),
-                validator: (value) {
-                  if (value == null ||
-                      value.isEmpty ||
-                      int.tryParse(value) == null ||
-                      int.tryParse(value)! <= 0) {
-                    return 'Must be a valid, positive number.';
-                  }
-                  return null;
-                },
-                onSaved: (value) {
-                  _comboPrice = int.parse(value!);
-                },
-              ),
-              ...getAllItems(),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  TextButton(
-                    onPressed: () {
-                      _formKey.currentState!.reset();
-                    },
-                    child: const Text('Reset'),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                TextFormField(
+                  maxLength: 50,
+                  decoration: const InputDecoration(
+                    label: Text('Combo Name'),
                   ),
-                  ElevatedButton(
-                    onPressed: _saveItem,
-                    child: const Text('Add Combo'),
-                  )
-                ],
-              ),
-            ],
+                  validator: (value) {
+                    if (value == null ||
+                        value.isEmpty ||
+                        value.trim().length <= 1 ||
+                        value.trim().length > 50) {
+                      return 'Must be between 1 and 50 characters.';
+                    }
+                    return null;
+                  },
+                  onSaved: (value) {
+                    _comboName = value!;
+                  },
+                ),
+                TextFormField(
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    label: Text('Combo Price'),
+                  ),
+                  validator: (value) {
+                    if (value == null ||
+                        value.isEmpty ||
+                        int.tryParse(value) == null ||
+                        int.tryParse(value)! <= 0) {
+                      return 'Must be a valid, positive number.';
+                    }
+                    return null;
+                  },
+                  onSaved: (value) {
+                    _comboPrice = int.parse(value!);
+                  },
+                ),
+                ...getAllItems(),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(
+                      onPressed: () {
+                        _formKey.currentState!.reset();
+                      },
+                      child: const Text('Reset'),
+                    ),
+                    ElevatedButton(
+                      onPressed: _saveItem,
+                      child: const Text('Add Combo'),
+                    )
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),

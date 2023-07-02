@@ -8,12 +8,14 @@ class Ingredient {
   final String name;
   final String type;
   final double quantity;
+  final bool bulk;
 
   Ingredient(
       {required this.id,
       required this.name,
       required this.type,
-      required this.quantity});
+      required this.quantity,
+      required this.bulk});
 
   factory Ingredient.fromJson(Map<String, dynamic> json) =>
       _$IngredientFromJson(json);
@@ -25,12 +27,14 @@ class Ingredient {
     String? name,
     String? type,
     double? quantity,
+    bool? bulk,
   }) =>
       Ingredient(
           id: id ?? this.id,
           name: name ?? this.name,
           type: type ?? this.type,
-          quantity: quantity ?? this.quantity);
+          quantity: quantity ?? this.quantity,
+          bulk: bulk ?? this.bulk);
 
   @override
   bool operator ==(Object other) =>

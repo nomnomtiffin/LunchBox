@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lunch_box/menu/display_categories_page.dart';
 import 'package:lunch_box/menu/display_ingredients_page.dart';
+import 'package:lunch_box/menu/display_inventory_page.dart';
 import 'package:lunch_box/menu/display_menu_items_page.dart';
 import 'package:lunch_box/menu/display_menu_page.dart';
 import 'package:lunch_box/provider/auth_provider.dart';
@@ -21,7 +22,7 @@ class AdminUserPage extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Text(
-                'Welcome' + ref.read(authProvider).name,
+                'Welcome ' + ref.read(authProvider).name,
                 style: const TextStyle(fontWeight: FontWeight.bold),
               ),
               Text(
@@ -58,6 +59,13 @@ class AdminUserPage extends ConsumerWidget {
                       builder: (ctx) => const DisplayIngredientsPage()));
                 },
                 child: const Text('Ingredients'),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (ctx) => const DisplayInventoryPage()));
+                },
+                child: const Text('Inventory'),
               ),
               TextButton(
                 onPressed: () async {

@@ -12,11 +12,17 @@ class DisplayIngredientsPage extends StatefulWidget {
 
 class _DisplayIngredientsPageState extends State<DisplayIngredientsPage> {
   List<Ingredient> _ingredients = [];
+
   @override
-  Widget build(BuildContext context) {
+  void initState() {
+    super.initState();
     MenuFactory.getIngredients().then((value) => setState(() {
           _ingredients = List.from(value);
         }));
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Ingredients"),
@@ -42,7 +48,9 @@ class _DisplayIngredientsPageState extends State<DisplayIngredientsPage> {
             return ListTile(
               key: ValueKey(_ingredients[index].id),
               title: Text(_ingredients[index].name),
-              subtitle: Text(_ingredients[index].type),
+              subtitle: _ingredients[index].bulk
+                  ? Text(_ingredients[index].type + " | Bulk")
+                  : Text(_ingredients[index].type),
             );
           },
           separatorBuilder: (context, index) {
