@@ -412,7 +412,7 @@ class _OrderPageState extends ConsumerState<OrderPage> {
                       buttonText: "Add Item",
                       textColor: Colors.white,
                       textSize: 15,
-                      count: 0,
+                      count: selectedMenuItem["Custom Thali"]!,
                       step: 1,
                       minCount: 0,
                       maxCount: 5,

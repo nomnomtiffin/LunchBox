@@ -18,7 +18,7 @@ class AppOrder {
   String name;
   AppAddress address;
   String
-      status; //New, LoginToOrder, ConfirmOrder, Payment, ConfirmPayment, OrderComplete
+      status; //New, LoginToOrder, ConfirmOrder, Payment, ConfirmPayment, OrderComplete, OrderDelivered, Cancelled
   DateTime createDateTime;
   DateTime lastUpdatedDateTime;
   String fireStoreId;
