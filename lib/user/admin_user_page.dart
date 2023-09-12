@@ -6,6 +6,7 @@ import 'package:lunch_box/menu/display_inventory_page.dart';
 import 'package:lunch_box/menu/display_menu_items_page.dart';
 import 'package:lunch_box/menu/display_menu_page.dart';
 import 'package:lunch_box/order/admin_custom_order_list_page.dart';
+import 'package:lunch_box/order/admin_order_summary_page.dart';
 import 'package:lunch_box/provider/auth_provider.dart';
 import 'package:lunch_box/tabs.dart';
 
@@ -74,6 +75,13 @@ class AdminUserPage extends ConsumerWidget {
                       builder: (ctx) => const AdminCustomOrderListPage()));
                 },
                 child: const Text('Custom Orders'),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (ctx) => const AdminOrderSummaryPage()));
+                },
+                child: const Text('Order summary'),
               ),
               TextButton(
                 onPressed: () async {
