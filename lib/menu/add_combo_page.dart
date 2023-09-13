@@ -111,9 +111,27 @@ class _AddComboPageState extends State<AddComboPage> {
         List<Combo> combos = [newCombo];
         menuByDate = Menu(
             menuDate: widget.selectedDate,
-            menuItems: List.empty(growable: true),
+            menuItems: selectedMenuItems.toList(),
             combos: combos);
       } else {
+        List<String> menuItemNames =
+            menuByDate.menuItems.map((e) => e.name).toList();
+        List<MenuItem> newMenuItemList = menuByDate.menuItems.toList();
+        for (MenuItem menuItem in newCombo.comboItems) {
+          if (!menuItemNames.contains(menuItem.name)) {
+            //update newMenuItemList with menu items of this combo if its not already present
+            newMenuItemList.add(menuItem);
+          }
+        }
+        int menuCount = menuByDate.menuItems.length;
+        for (int i = 0; i < menuCount; i++) {
+          menuByDate.menuItems.removeAt(0);
+        }
+        newMenuItemList.sort((a, b) => a.order.compareTo(b.order));
+        for (MenuItem menuItem in newMenuItemList) {
+          menuByDate.menuItems.add(menuItem);
+        }
+        //update menuItems with menu items of this combo
         menuByDate.combos.add(newCombo);
       }
       MenuFactory.setMenuByDate(widget.selectedDate, menuByDate);

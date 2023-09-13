@@ -68,10 +68,10 @@ class _CreateMenuPageState extends State<CreateMenuPage> {
                   child: Text('Remove Thali'),
                   value: 2,
                 ),
-                const PopupMenuItem(
+                /*const PopupMenuItem(
                   child: Text('Edit Custom Thali'),
                   value: 3,
-                )
+                )*/
               ];
             },
             onSelected: (value) async {

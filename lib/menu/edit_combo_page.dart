@@ -116,14 +116,51 @@ class _EditComboPageState extends State<EditComboPage> {
         List<Combo> combos = [newCombo];
         menuByDate = Menu(
             menuDate: widget.selectedDate,
-            menuItems: List.empty(growable: true),
+            menuItems: _selectedMenuItems.toList(),
             combos: combos);
       } else {
         var combos = menuByDate.combos;
+        Map<String, int> menuItemCount = {};
+        Map<String, MenuItem> menuItemMap = {};
+        for (Combo combo in combos) {
+          for (MenuItem menuItem in combo.comboItems) {
+            int count = menuItemCount[menuItem.name] ?? 0;
+            menuItemCount[menuItem.name] = count++;
+            menuItemMap[menuItem.name] = menuItem;
+          }
+        }
         for (Combo combo in combos) {
           if (combo.comboName == widget.selectedCombo.comboName) {
             combos.remove(combo);
             combos.add(newCombo);
+            //Remove all the old
+            for (MenuItem menuItem in combo.comboItems) {
+              int count = menuItemCount[menuItem.name] ?? 0;
+              if ((count - 1) > 0) {
+                menuItemCount[menuItem.name] = count - 1;
+              } else {
+                menuItemCount.remove(menuItem.name);
+                menuItemMap.remove(menuItem.name);
+              }
+            }
+            //Add menuItems of the new combo
+            for (MenuItem menuItem in newCombo.comboItems) {
+              if (!menuItemMap.containsKey(menuItem.name)) {
+                menuItemMap[menuItem.name] = menuItem;
+              }
+            }
+            int menuCount = menuByDate.menuItems.length;
+            for (int i = 0; i < menuCount; i++) {
+              menuByDate.menuItems.removeAt(0);
+            }
+            List<MenuItem> newMenuItemList = [];
+            for (MapEntry entries in menuItemMap.entries) {
+              newMenuItemList.add(entries.value);
+            }
+            newMenuItemList.sort((a, b) => a.order.compareTo(b.order));
+            for (MenuItem menuItem in newMenuItemList) {
+              menuByDate.menuItems.add(menuItem);
+            }
             break;
           }
         }
