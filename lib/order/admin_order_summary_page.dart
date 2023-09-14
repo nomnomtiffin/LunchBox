@@ -23,21 +23,27 @@ class _AdminOrderSummaryPageState extends ConsumerState<AdminOrderSummaryPage> {
   Map<String, double> comboMap = {};
   Map<Ingredient, double> ingredientMap = {};
   Map<String, double> menuItemCount = {};
+  DateTime selectedDate = DateTime(2023);
 
   @override
   void initState() {
     super.initState();
+    //TODO replace the hardcoded date with DateTime.now
+    DateTime currentDate = DateTime(2023, 6, 30);
     setState(() {
+      selectedDate = currentDate;
       isLoading = true;
     });
-    getData();
+    getData(currentDate);
   }
 
-  void getData() async {
+  void getData(DateTime currentDate) async {
     var orderListNotifier = ref.read(orderListProvider.notifier);
-    List<AppOrder> orderList =
-        await orderListNotifier.loadOrders(DateTime(2023, 6, 30));
-    //TODO replace the hardcoded date with dynamic date
+    List<AppOrder> orderList = await orderListNotifier.loadOrders(currentDate);
+
+    comboMap = {};
+    ingredientMap = {};
+    menuItemCount = {};
     var menuNotifier = ref.read(menuProvider.notifier);
     await menuNotifier.getMenu();
     Menu menu = ref.read(menuProvider);
@@ -69,6 +75,7 @@ class _AdminOrderSummaryPageState extends ConsumerState<AdminOrderSummaryPage> {
     setState(() {
       isLoading = false;
       orders = orderList;
+      selectedDate = currentDate;
     });
   }
 
@@ -78,25 +85,54 @@ class _AdminOrderSummaryPageState extends ConsumerState<AdminOrderSummaryPage> {
       appBar: AppBar(
         title: const Text("Orders"),
       ),
-      body: isLoading
-          ? const SafeArea(
-              child: Center(
-                child: CircularProgressIndicator(),
-              ),
-            )
-          : orders.isEmpty
-              ? const SafeArea(
-                  child: Center(
-                  child: Text("No orders Available!"),
-                ))
-              : SafeArea(
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      children: [...getSummary()],
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    const Spacer(),
+                    Text(
+                        '${selectedDate.day}/${selectedDate.month}/${selectedDate.year}    '),
+                    ElevatedButton(
+                      onPressed: changeDate,
+                      child: const Icon(
+                        Icons.calendar_month,
+                        color: Colors.white,
+                      ),
                     ),
-                  ),
+                    const Spacer(),
+                  ],
                 ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: isLoading
+                      ? const SafeArea(
+                          child: Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                        )
+                      : orders.isEmpty
+                          ? const SafeArea(
+                              child: Center(
+                              child: Text("No orders Available!"),
+                            ))
+                          : SafeArea(
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Column(
+                                  children: [...getSummary()],
+                                ),
+                              ),
+                            ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 
@@ -125,5 +161,19 @@ class _AdminOrderSummaryPageState extends ConsumerState<AdminOrderSummaryPage> {
     }
 
     return widgets;
+  }
+
+  changeDate() async {
+    DateTime? newDate = await showDatePicker(
+        context: context,
+        initialDate: selectedDate,
+        firstDate: DateTime(2022),
+        lastDate: DateTime.now());
+    if (newDate == null) return;
+    setState(() {
+      selectedDate = newDate;
+      isLoading = true;
+    });
+    getData(newDate);
   }
 }

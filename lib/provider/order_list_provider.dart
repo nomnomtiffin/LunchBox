@@ -36,6 +36,8 @@ class OrderListNotifier extends StateNotifier<List<AppOrder>> {
         }
       }
       state = orders;
+    } else {
+      state = List.empty();
     }
     return state;
   }
