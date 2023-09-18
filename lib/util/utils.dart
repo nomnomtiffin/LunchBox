@@ -12,7 +12,7 @@ String roundIngValue(Ingredient ing, double totalRemainingQuantity) {
     if (totalRemainingQuantity >= 1000) {
       double roundValue = totalRemainingQuantity / 1000;
       double remainderValue = totalRemainingQuantity % 1000;
-      roundedValue = roundValue.toString() + "kg ";
+      roundedValue = roundValue.toStringAsFixed(0) + "kg ";
       if (remainderValue > 0) {
         roundedValue += remainderValue.toString() + "g";
       }
@@ -23,13 +23,17 @@ String roundIngValue(Ingredient ing, double totalRemainingQuantity) {
     if (totalRemainingQuantity >= 1000) {
       double roundValue = totalRemainingQuantity / 1000;
       double remainderValue = totalRemainingQuantity % 1000;
-      roundedValue = roundValue.toString() + "l ";
+      roundedValue = roundValue.toStringAsFixed(0) + "l ";
       if (remainderValue > 0) {
         roundedValue += remainderValue.toString() + "ml";
       }
     } else {
       roundedValue = totalRemainingQuantity.toString() + "ml";
     }
+  } else if ("count" == ing.type) {
+    roundedValue = totalRemainingQuantity.toString();
+  } else {
+    roundedValue = totalRemainingQuantity.toString();
   }
   return roundedValue;
 }
