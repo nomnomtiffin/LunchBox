@@ -96,6 +96,7 @@ class OrderNotifier extends StateNotifier<AppOrder> {
         lastUpdatedDateTime: DateTime.now(),
         phoneNumber: phoneNumber,
         uId: uId);
+    state = order;
     _firestore
         .collection("app_order")
         .doc(firestoreId)

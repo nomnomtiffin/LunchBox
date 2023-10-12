@@ -28,6 +28,8 @@ AppOrder _$AppOrderFromJson(Map<String, dynamic> json) => AppOrder(
           DateTime.parse(json['lastUpdatedDateTime'] as String),
       fireStoreId: json['fireStoreId'] as String,
       tax: (json['tax'] as num?)?.toDouble() ?? 5.2,
+      feedback: json['feedback'] as String?,
+      rating: json['rating'] as int?,
     );
 
 Map<String, dynamic> _$AppOrderToJson(AppOrder instance) => <String, dynamic>{
@@ -47,4 +49,6 @@ Map<String, dynamic> _$AppOrderToJson(AppOrder instance) => <String, dynamic>{
       'createDateTime': instance.createDateTime.toIso8601String(),
       'lastUpdatedDateTime': instance.lastUpdatedDateTime.toIso8601String(),
       'fireStoreId': instance.fireStoreId,
+      'feedback': instance.feedback,
+      'rating': instance.rating,
     };
