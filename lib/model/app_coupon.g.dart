@@ -20,6 +20,7 @@ AppCoupon _$AppCouponFromJson(Map<String, dynamic> json) => AppCoupon(
       isAmount: json['isAmount'] as bool,
       discountAmount: (json['discountAmount'] as num?)?.toDouble(),
       discountPercentage: (json['discountPercentage'] as num?)?.toDouble(),
+      available: json['available'] as bool,
     );
 
 Map<String, dynamic> _$AppCouponToJson(AppCoupon instance) => <String, dynamic>{
@@ -34,4 +35,5 @@ Map<String, dynamic> _$AppCouponToJson(AppCoupon instance) => <String, dynamic>{
       'isAmount': instance.isAmount,
       'discountAmount': instance.discountAmount,
       'discountPercentage': instance.discountPercentage,
+      'available': instance.available,
     };

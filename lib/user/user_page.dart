@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lunch_box/coupon/coupon_list_page.dart';
 import 'package:lunch_box/menu/display_menu_page.dart';
 import 'package:lunch_box/provider/auth_provider.dart';
 import 'package:lunch_box/tabs.dart';
@@ -32,6 +33,13 @@ class UserPage extends ConsumerWidget {
               TextButton(
                 onPressed: () {},
                 child: const Text('Orders'),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (ctx) => const CouponListPage()));
+                },
+                child: const Text('Coupons'),
               ),
               TextButton(
                 onPressed: () async {

@@ -53,10 +53,17 @@ class OrderDetailNotifier extends StateNotifier<AppOrder> {
         count: 1,
         redeemCount: 0,
         startDate: DateTime.now(),
-        endDate: DateTime.now().add(Duration(days: 30)),
+        endDate: DateTime.now().add(Duration(days: 30)).copyWith(
+              hour: 0,
+              minute: 0,
+              second: 0,
+              millisecond: 0,
+              microsecond: 0,
+            ),
         isAmount: true,
         discountAmount: order.totalAfterTax,
-        uId: order.uId);
+        uId: order.uId,
+        available: true);
     DocumentReference<Map<String, dynamic>> documentReference =
         await _firestore.collection("app_coupon").add(appCoupon.toJson());
     await documentReference.update({"fireStoreId": documentReference.id});

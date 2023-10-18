@@ -15,6 +15,7 @@ class AppCoupon {
   bool isAmount;
   double? discountAmount;
   double? discountPercentage;
+  bool available;
 
   AppCoupon(
       {this.uId,
@@ -27,7 +28,8 @@ class AppCoupon {
       this.redeemIds,
       required this.isAmount,
       this.discountAmount,
-      this.discountPercentage});
+      this.discountPercentage,
+      required this.available});
 
   factory AppCoupon.fromJson(Map<String, dynamic> json) =>
       _$AppCouponFromJson(json);
@@ -46,17 +48,20 @@ class AppCoupon {
     bool? isAmount,
     double? discountAmount,
     double? discountPercentage,
+    bool? available,
   }) =>
       AppCoupon(
-          uId: uId ?? this.uId,
-          fireStoreId: fireStoreId ?? this.fireStoreId,
-          couponName: couponName ?? this.couponName,
-          count: count ?? this.count,
-          redeemCount: redeemCount ?? this.redeemCount,
-          startDate: startDate ?? this.startDate,
-          endDate: endDate ?? this.endDate,
-          redeemIds: redeemIds ?? this.redeemIds,
-          isAmount: isAmount ?? this.isAmount,
-          discountAmount: discountAmount ?? this.discountAmount,
-          discountPercentage: discountPercentage ?? this.discountPercentage);
+        uId: uId ?? this.uId,
+        fireStoreId: fireStoreId ?? this.fireStoreId,
+        couponName: couponName ?? this.couponName,
+        count: count ?? this.count,
+        redeemCount: redeemCount ?? this.redeemCount,
+        startDate: startDate ?? this.startDate,
+        endDate: endDate ?? this.endDate,
+        redeemIds: redeemIds ?? this.redeemIds,
+        isAmount: isAmount ?? this.isAmount,
+        discountAmount: discountAmount ?? this.discountAmount,
+        discountPercentage: discountPercentage ?? this.discountPercentage,
+        available: available ?? this.available,
+      );
 }
