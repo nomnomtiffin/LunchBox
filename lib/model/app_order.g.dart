@@ -30,6 +30,9 @@ AppOrder _$AppOrderFromJson(Map<String, dynamic> json) => AppOrder(
       tax: (json['tax'] as num?)?.toDouble() ?? 5.2,
       feedback: json['feedback'] as String?,
       rating: json['rating'] as int?,
+      couponApplied: json['couponApplied'] == null
+          ? null
+          : AppCoupon.fromJson(json['couponApplied'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$AppOrderToJson(AppOrder instance) => <String, dynamic>{
@@ -51,4 +54,5 @@ Map<String, dynamic> _$AppOrderToJson(AppOrder instance) => <String, dynamic>{
       'fireStoreId': instance.fireStoreId,
       'feedback': instance.feedback,
       'rating': instance.rating,
+      'couponApplied': instance.couponApplied?.toJson(),
     };

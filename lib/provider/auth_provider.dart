@@ -99,7 +99,9 @@ class AuthNotifier extends StateNotifier<AppUser> {
     DocumentSnapshot snapshot =
         await _firestore.collection("user").doc(state.uId).get();
     if (snapshot.exists) {
-      state = AppUser.fromMap(snapshot.data() as Map<String, dynamic>);
+      AppUser appUser =
+          AppUser.fromMap(snapshot.data() as Map<String, dynamic>);
+      state = appUser.copyWith(isLoading: true);
       return true;
     } else {
       return false;
@@ -127,9 +129,10 @@ class AuthNotifier extends StateNotifier<AppUser> {
     _firestore.collection("user").doc(state.uId).set(state.toMap());
   }
 
-  Future signOutUser({required BuildContext context}) async {
+  Future<AppUser> signOutUser({required BuildContext context}) async {
     await _firebaseAuth.signOut();
     state = getAppUser();
+    return state;
   }
 
   AppUser getAppUser() {

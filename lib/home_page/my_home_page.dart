@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lunch_box/model/combo.dart';
 import 'package:lunch_box/model/menu.dart';
 import 'package:lunch_box/model/menu_item.dart';
+import 'package:lunch_box/provider/auth_provider.dart';
 import 'package:lunch_box/provider/menu_provider.dart';
 import 'package:lunch_box/provider/order_provider.dart';
 
@@ -142,7 +143,8 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
                         count,
                         double.parse(combo.comboPrice.toString()),
                         true,
-                        menu.menuDate);
+                        menu.menuDate,
+                        ref.read(authProvider));
                   },
                   onDecrement: (count) {
                     ref.read(orderProvider.notifier).setSelectedMenuItem(
@@ -150,7 +152,8 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
                         count,
                         double.parse(combo.comboPrice.toString()),
                         false,
-                        menu.menuDate);
+                        menu.menuDate,
+                        ref.read(authProvider));
                   },
                 ),
               ],
@@ -242,7 +245,8 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
                           count,
                           ref.watch(orderProvider).customThaliPrice,
                           true,
-                          menu.menuDate);
+                          menu.menuDate,
+                          ref.read(authProvider));
                     },
                     onDecrement: (count) {
                       ref.read(orderProvider.notifier).setSelectedMenuItem(
@@ -250,7 +254,8 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
                           count,
                           ref.watch(orderProvider).customThaliPrice,
                           false,
-                          menu.menuDate);
+                          menu.menuDate,
+                          ref.read(authProvider));
                     },
                   ),
                 ),
@@ -334,13 +339,21 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
                       if (value == null || value == false) {
                         ref
                             .read(orderProvider.notifier)
-                            .setSelectedCustomMenuAndPrice(menuItem.name,
-                                menuItem.price, false, menu.menuDate);
+                            .setSelectedCustomMenuAndPrice(
+                                menuItem.name,
+                                menuItem.price,
+                                false,
+                                menu.menuDate,
+                                ref.read(authProvider));
                       } else {
                         ref
                             .read(orderProvider.notifier)
-                            .setSelectedCustomMenuAndPrice(menuItem.name,
-                                menuItem.price, true, menu.menuDate);
+                            .setSelectedCustomMenuAndPrice(
+                                menuItem.name,
+                                menuItem.price,
+                                true,
+                                menu.menuDate,
+                                ref.read(authProvider));
                       }
                     });
                   },

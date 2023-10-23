@@ -152,41 +152,75 @@ class _OrderPageState extends ConsumerState<OrderPage> {
           ),
         ),
       ));
+      List<Widget> orderDetail = [
+        Divider(
+          color: Theme.of(context).disabledColor,
+        ),
+        Row(
+          children: [
+            Text("Sub Total:",
+                style: TextStyle(color: Theme.of(context).disabledColor)),
+            const Spacer(),
+            Text(
+              '₹ ' + ref.watch(orderProvider).totalPrice.toString(),
+              style: TextStyle(color: Theme.of(context).disabledColor),
+            )
+          ],
+        ),
+        const SizedBox(
+          height: 5,
+        )
+      ];
+      //If coupon is available then only add below row
+      if (ref.watch(orderProvider).couponApplied != null) {
+        orderDetail.add(Row(
+          children: [
+            Text("Discount:",
+                style: TextStyle(color: Theme.of(context).disabledColor)),
+            TextButton(onPressed: () {}, child: const Text("Change coupon")),
+            const Spacer(),
+            Text(
+              ref.watch(orderProvider).couponApplied!.isAmount
+                  ? '₹ ' +
+                      ref
+                          .watch(orderProvider)
+                          .couponApplied!
+                          .discountAmount!
+                          .toString()
+                  : ref
+                          .watch(orderProvider)
+                          .couponApplied!
+                          .discountPercentage!
+                          .toString() +
+                      "%",
+              style: TextStyle(color: Theme.of(context).disabledColor),
+            )
+          ],
+        ));
+        orderDetail.add(const SizedBox(
+          height: 5,
+        ));
+      }
+      orderDetail.add(Row(
+        children: [
+          Text("Tax:",
+              style: TextStyle(color: Theme.of(context).disabledColor)),
+          const Spacer(),
+          Text(
+            ref.watch(orderProvider).tax.toString() + "%",
+            style: TextStyle(color: Theme.of(context).disabledColor),
+          )
+        ],
+      ));
+      orderDetail.add(const SizedBox(
+        height: 5,
+      ));
+
       contents.add(Padding(
         padding: const EdgeInsets.fromLTRB(20, 8, 20, 8),
         child: Column(
           children: [
-            Divider(
-              color: Theme.of(context).disabledColor,
-            ),
-            Row(
-              children: [
-                Text("Sub Total:",
-                    style: TextStyle(color: Theme.of(context).disabledColor)),
-                const Spacer(),
-                Text(
-                  '₹ ' + ref.watch(orderProvider).totalPrice.toString(),
-                  style: TextStyle(color: Theme.of(context).disabledColor),
-                )
-              ],
-            ),
-            const SizedBox(
-              height: 5,
-            ),
-            Row(
-              children: [
-                Text("Tax:",
-                    style: TextStyle(color: Theme.of(context).disabledColor)),
-                const Spacer(),
-                Text(
-                  ref.watch(orderProvider).tax.toString() + "%",
-                  style: TextStyle(color: Theme.of(context).disabledColor),
-                )
-              ],
-            ),
-            const SizedBox(
-              height: 5,
-            ),
+            ...orderDetail,
             Row(
               children: [
                 const Text("Total:",
@@ -311,7 +345,8 @@ class _OrderPageState extends ConsumerState<OrderPage> {
                           count,
                           double.parse(combo.comboPrice.toString()),
                           true,
-                          menu.menuDate);
+                          menu.menuDate,
+                          ref.read(authProvider));
                     },
                     onDecrement: (count) {
                       ref.read(orderProvider.notifier).setSelectedMenuItem(
@@ -319,7 +354,8 @@ class _OrderPageState extends ConsumerState<OrderPage> {
                           count,
                           double.parse(combo.comboPrice.toString()),
                           false,
-                          menu.menuDate);
+                          menu.menuDate,
+                          ref.read(authProvider));
                     },
                   ),
                 ],
@@ -426,7 +462,8 @@ class _OrderPageState extends ConsumerState<OrderPage> {
                             count,
                             ref.watch(orderProvider).customThaliPrice,
                             true,
-                            menu.menuDate);
+                            menu.menuDate,
+                            ref.read(authProvider));
                       },
                       onDecrement: (count) {
                         ref.read(orderProvider.notifier).setSelectedMenuItem(
@@ -434,7 +471,8 @@ class _OrderPageState extends ConsumerState<OrderPage> {
                             count,
                             ref.watch(orderProvider).customThaliPrice,
                             false,
-                            menu.menuDate);
+                            menu.menuDate,
+                            ref.read(authProvider));
                       },
                     ),
                   ),

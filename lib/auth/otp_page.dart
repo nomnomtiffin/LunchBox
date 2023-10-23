@@ -134,6 +134,9 @@ class _OtpPageState extends ConsumerState<OtpPage> {
                   .read(authProvider.notifier)
                   .saveUserDataToFirebase(context: context);
             }
+            await ref
+                .read(orderProvider.notifier)
+                .updateCoupon(ref.read(authProvider));
             ref.read(authProvider.notifier).stopLoading();
             Navigator.of(context).pushAndRemoveUntil(
                 MaterialPageRoute(

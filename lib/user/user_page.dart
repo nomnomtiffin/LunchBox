@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lunch_box/coupon/coupon_list_page.dart';
 import 'package:lunch_box/menu/display_menu_page.dart';
+import 'package:lunch_box/model/app_user.dart';
 import 'package:lunch_box/provider/auth_provider.dart';
+import 'package:lunch_box/provider/order_provider.dart';
 import 'package:lunch_box/tabs.dart';
 
 class UserPage extends ConsumerWidget {
@@ -43,7 +45,7 @@ class UserPage extends ConsumerWidget {
               ),
               TextButton(
                 onPressed: () async {
-                  await ref
+                  AppUser appUser = await ref
                       .read(authProvider.notifier)
                       .signOutUser(context: context);
                   Navigator.of(context).pushAndRemoveUntil(
@@ -52,6 +54,7 @@ class UserPage extends ConsumerWidget {
                                 selectedPage: 1,
                               )),
                       (route) => false);
+                  await ref.read(orderProvider.notifier).updateCoupon(appUser);
                 },
                 child: const Text('Sign Out'),
               ),

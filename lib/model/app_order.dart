@@ -1,5 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:lunch_box/model/app_address.dart';
+import 'package:lunch_box/model/app_coupon.dart';
 
 part 'app_order.g.dart';
 
@@ -24,6 +25,7 @@ class AppOrder {
   String fireStoreId;
   String? feedback;
   int? rating;
+  AppCoupon? couponApplied;
 
   AppOrder(
       {required this.selectedMenuItem,
@@ -43,7 +45,8 @@ class AppOrder {
       required this.fireStoreId,
       this.tax = 5.2,
       this.feedback,
-      this.rating});
+      this.rating,
+      this.couponApplied});
 
   factory AppOrder.fromJson(Map<String, dynamic> json) =>
       _$AppOrderFromJson(json);
@@ -67,7 +70,8 @@ class AppOrder {
           DateTime? lastUpdatedDateTime,
           String? fireStoreId,
           String? feedback,
-          int? rating}) =>
+          int? rating,
+          AppCoupon? couponApplied}) =>
       AppOrder(
         selectedMenuItem: selectedMenuItem ?? this.selectedMenuItem,
         selectedCustomMenu: selectedCustomMenu ?? this.selectedCustomMenu,
@@ -86,6 +90,11 @@ class AppOrder {
         fireStoreId: fireStoreId ?? this.fireStoreId,
         feedback: feedback ?? this.feedback,
         rating: rating ?? this.rating,
+        couponApplied: couponApplied == null
+            ? this.couponApplied
+            : couponApplied!.fireStoreId == "dummy"
+                ? null
+                : couponApplied,
       );
 
   static initial() {
