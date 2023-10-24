@@ -259,7 +259,7 @@ class _OrderPageState extends ConsumerState<OrderPage> {
     List<Widget> menuItems = List.empty(growable: true);
     Map<String, double> selectedMenuItem =
         ref.watch(orderProvider).selectedMenuItem;
-    //Display Combo
+    //Display Thali
     for (Combo combo in menu.combos) {
       if (selectedMenuItem.keys.contains(combo.comboName) &&
           selectedMenuItem[combo.comboName]! > 0) {
@@ -275,6 +275,7 @@ class _OrderPageState extends ConsumerState<OrderPage> {
         menuItems.add(Padding(
           padding: const EdgeInsets.fromLTRB(0.0, 8.0, 0.0, 0.0),
           child: Card(
+            key: ValueKey(comboImageName),
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Row(
@@ -378,6 +379,7 @@ class _OrderPageState extends ConsumerState<OrderPage> {
 
       //Custom Thali
       menuItems.add(Card(
+        key: const ValueKey("CustomThali"),
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
