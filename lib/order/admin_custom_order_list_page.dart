@@ -64,7 +64,6 @@ class _AdminCustomOrderListPageState
                     onPressed: changeDate,
                     child: const Icon(
                       Icons.calendar_month,
-                      color: Colors.white,
                     ),
                   ),
                   const Spacer(),

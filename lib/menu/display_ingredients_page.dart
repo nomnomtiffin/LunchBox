@@ -29,8 +29,6 @@ class _DisplayIngredientsPageState extends State<DisplayIngredientsPage> {
         actions: [
           TextButton(
             child: const Text('Add Item'),
-            style: TextButton.styleFrom(
-                foregroundColor: Theme.of(context).secondaryHeaderColor),
             onPressed: () async {
               await Navigator.of(context).push(MaterialPageRoute(
                   builder: (ctx) =>

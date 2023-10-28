@@ -34,8 +34,6 @@ class _DisplayMenuItemsPageState extends State<DisplayMenuItemsPage> {
         actions: [
           TextButton(
             child: const Text('Add Item'),
-            style: TextButton.styleFrom(
-                foregroundColor: Theme.of(context).secondaryHeaderColor),
             onPressed: () async {
               await Navigator.of(context).push(
                   MaterialPageRoute(builder: (ctx) => const AddMenuItemPage()));
@@ -47,8 +45,6 @@ class _DisplayMenuItemsPageState extends State<DisplayMenuItemsPage> {
           ),
           TextButton(
             child: const Text('Edit Item'),
-            style: TextButton.styleFrom(
-                foregroundColor: Theme.of(context).secondaryHeaderColor),
             onPressed: () async {
               if (_selectedMenuItem.isEmpty) {
                 ScaffoldMessenger.of(context).showSnackBar(const SnackBar(

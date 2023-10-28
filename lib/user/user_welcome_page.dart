@@ -31,17 +31,12 @@ class UserWelcomePage extends StatelessWidget {
                             height: 12,
                           ),
                           ElevatedButton(
-                            child: const Text('Get Started'),
-                            onPressed: () {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (ctx) => const AuthPage(1)));
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Theme.of(context)
-                                  .colorScheme
-                                  .primaryContainer,
-                            ),
-                          )
+                              child: const Text('Get Started'),
+                              onPressed: () {
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (ctx) => const AuthPage(1)));
+                              },
+                              style: ElevatedButton.styleFrom())
                         ],
                       ),
                     ),

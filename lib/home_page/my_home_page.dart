@@ -122,21 +122,21 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
                 ),
                 const Spacer(),
                 CustomizableCounter(
-                  borderColor: Theme.of(context).unselectedWidgetColor,
+                  borderColor: Theme.of(context).colorScheme.primaryContainer,
                   borderWidth: 5,
                   borderRadius: 100,
                   backgroundColor: Theme.of(context).colorScheme.primary,
                   buttonText: "Add Item",
-                  textColor: Colors.white,
+                  textColor: Theme.of(context).colorScheme.onPrimary,
                   textSize: 15,
                   count: selectedMenuItem[combo.comboName] ?? 0,
                   step: 1,
                   minCount: 0,
                   maxCount: 5,
-                  incrementIcon:
-                      const Icon(Icons.add, color: Colors.white, size: 15),
-                  decrementIcon:
-                      const Icon(Icons.remove, color: Colors.white, size: 15),
+                  incrementIcon: Icon(Icons.add,
+                      color: Theme.of(context).colorScheme.onPrimary, size: 15),
+                  decrementIcon: Icon(Icons.remove,
+                      color: Theme.of(context).colorScheme.onPrimary, size: 15),
                   onIncrement: (count) {
                     ref.read(orderProvider.notifier).setSelectedMenuItem(
                         combo.comboName,
@@ -221,7 +221,7 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
                   child: CustomizableCounter(
                     borderColor: ref.watch(orderProvider).customThaliPrice < 50
                         ? Theme.of(context).disabledColor
-                        : Theme.of(context).unselectedWidgetColor,
+                        : Theme.of(context).colorScheme.primaryContainer,
                     borderWidth: 5,
                     borderRadius: 100,
                     backgroundColor:
@@ -229,16 +229,18 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
                             ? Theme.of(context).disabledColor
                             : Theme.of(context).colorScheme.primary,
                     buttonText: "Add Item",
-                    textColor: Colors.white,
+                    textColor: Theme.of(context).colorScheme.onPrimary,
                     textSize: 15,
                     count: selectedMenuItem["Custom Thali"] ?? 0,
                     step: 1,
                     minCount: 0,
                     maxCount: 5,
-                    incrementIcon:
-                        const Icon(Icons.add, color: Colors.white, size: 15),
-                    decrementIcon:
-                        const Icon(Icons.remove, color: Colors.white, size: 15),
+                    incrementIcon: Icon(Icons.add,
+                        color: Theme.of(context).colorScheme.onPrimary,
+                        size: 15),
+                    decrementIcon: Icon(Icons.remove,
+                        color: Theme.of(context).colorScheme.onPrimary,
+                        size: 15),
                     onIncrement: (count) {
                       ref.read(orderProvider.notifier).setSelectedMenuItem(
                           "Custom Thali",

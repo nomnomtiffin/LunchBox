@@ -138,8 +138,6 @@ class _OrderDetailPageState extends ConsumerState<OrderDetailPage> {
                                   borderRadius: BorderRadius.circular(100),
                                 ),
                               ),
-                              backgroundColor: MaterialStateProperty.all(
-                                  Theme.of(context).primaryColor),
                             )),
                       ),
                     )

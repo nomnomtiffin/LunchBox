@@ -127,11 +127,6 @@ class _AuthPageState extends ConsumerState<AuthPage> {
                             onPressed: () {
                               _login();
                             },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Theme.of(context)
-                                  .colorScheme
-                                  .primaryContainer,
-                            ),
                           )
                         ],
                       ),

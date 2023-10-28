@@ -83,8 +83,6 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
                                 borderRadius: BorderRadius.circular(100),
                               ),
                             ),
-                            backgroundColor: MaterialStateProperty.all(
-                                Theme.of(context).primaryColor),
                           )),
                     ),
                   )

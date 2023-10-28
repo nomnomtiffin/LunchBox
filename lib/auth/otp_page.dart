@@ -79,9 +79,10 @@ class _OtpPageState extends ConsumerState<OtpPage> {
                         ),
                         ElevatedButton(
                           child: ref.watch(authProvider).isLoading
-                              ? const SizedBox(
+                              ? SizedBox(
                                   child: CircularProgressIndicator(
-                                    color: Colors.grey,
+                                    color:
+                                        Theme.of(context).colorScheme.onPrimary,
                                   ),
                                   height: 20.0,
                                   width: 20.0,
@@ -94,10 +95,6 @@ class _OtpPageState extends ConsumerState<OtpPage> {
                               showSnackBar(context, "Enter 6-Digit code");
                             }
                           },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor:
-                                Theme.of(context).colorScheme.primaryContainer,
-                          ),
                         )
                       ],
                     ),

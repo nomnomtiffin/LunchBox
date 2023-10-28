@@ -42,8 +42,6 @@ class _CreateMenuPageState extends State<CreateMenuPage> {
         actions: [
           TextButton(
             child: const Text('Copy'),
-            style: TextButton.styleFrom(
-                foregroundColor: Theme.of(context).secondaryHeaderColor),
             onPressed: () async {
               await Navigator.of(context).push(MaterialPageRoute(
                   builder: (ctx) => CopyMenuPage(widget.selectedDate)));
