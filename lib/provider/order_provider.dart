@@ -41,7 +41,7 @@ class OrderNotifier extends StateNotifier<AppOrder> {
 
   void setSelectedMenuItem(String comboName, double count, double price,
       bool add, DateTime menuDate, AppUser appUser) async {
-    await setCoupon(appUser);
+    await setCoupon(appUser, null);
     Map<String, double> newselectedMenuItem = {
       ...state.selectedMenuItem,
       comboName: count
@@ -105,6 +105,19 @@ class OrderNotifier extends StateNotifier<AppOrder> {
   void firstTimeSave(String status) {
     AppOrder order =
         state.copyWith(status: status, lastUpdatedDateTime: DateTime.now());
+    _firestore
+        .collection("app_order")
+        .add(order.toJson())
+        .then((value) => {state = state.copyWith(fireStoreId: value.id)});
+  }
+
+  void firstTimeSaveWithUid(String status, String phoneNumber, String uId) {
+    AppOrder order = state.copyWith(
+        status: status,
+        lastUpdatedDateTime: DateTime.now(),
+        phoneNumber: phoneNumber,
+        uId: uId);
+    state = order;
     _firestore
         .collection("app_order")
         .add(order.toJson())
@@ -185,10 +198,10 @@ class OrderNotifier extends StateNotifier<AppOrder> {
 
   Future<void> updateCouponSignOut(AppUser appUser,
       {required BuildContext context}) async {
-    await updateCoupon(appUser);
+    await updateCoupon(appUser, null);
   }
 
-  Future<void> updateCoupon(AppUser appUser) async {
+  Future<void> updateCoupon(AppUser appUser, AppCoupon? newCoupon) async {
     state = state.copyWith(
         couponApplied: AppCoupon(
             fireStoreId: "dummy",
@@ -198,7 +211,7 @@ class OrderNotifier extends StateNotifier<AppOrder> {
             endDate: DateTime.now(),
             isAmount: false,
             available: false));
-    await setCoupon(appUser);
+    await setCoupon(appUser, newCoupon);
     double totalCost = state.totalPrice;
     double totalCostAfterDiscount = 0;
     double totalAfterTax = 0;
@@ -225,22 +238,27 @@ class OrderNotifier extends StateNotifier<AppOrder> {
     state = state.copyWith(totalPrice: totalCost, totalAfterTax: totalAfterTax);
   }
 
-  Future<void> setCoupon(AppUser appUser) async {
-    if (state.couponApplied == null ||
-        state.couponApplied!.endDate.isBefore(DateTime.now())) {
-      List<AppCoupon> coupons = await loadCoupons(appUser);
-      if (coupons.isNotEmpty) {
-        state = state.copyWith(couponApplied: coupons.first);
-      } else {
-        state = state.copyWith(
-            couponApplied: AppCoupon(
-                fireStoreId: "dummy",
-                count: 0,
-                redeemCount: 0,
-                startDate: DateTime.now(),
-                endDate: DateTime.now(),
-                isAmount: false,
-                available: false));
+  Future<void> setCoupon(AppUser appUser, AppCoupon? newCoupon) async {
+    if (newCoupon != null) {
+      state = state.copyWith(couponApplied: newCoupon);
+    } else {
+      //find the best coupon and apply that
+      if (state.couponApplied == null ||
+          state.couponApplied!.endDate.isBefore(DateTime.now())) {
+        List<AppCoupon> coupons = await loadCoupons(appUser);
+        if (coupons.isNotEmpty) {
+          state = state.copyWith(couponApplied: coupons.first);
+        } else {
+          state = state.copyWith(
+              couponApplied: AppCoupon(
+                  fireStoreId: "dummy",
+                  count: 0,
+                  redeemCount: 0,
+                  startDate: DateTime.now(),
+                  endDate: DateTime.now(),
+                  isAmount: false,
+                  available: false));
+        }
       }
     }
   }

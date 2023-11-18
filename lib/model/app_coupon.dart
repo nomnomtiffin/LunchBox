@@ -64,4 +64,14 @@ class AppCoupon {
         discountPercentage: discountPercentage ?? this.discountPercentage,
         available: available ?? this.available,
       );
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is AppCoupon &&
+          runtimeType == other.runtimeType &&
+          fireStoreId == other.fireStoreId;
+
+  @override
+  int get hashCode => fireStoreId.hashCode;
 }

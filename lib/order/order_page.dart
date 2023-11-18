@@ -1,6 +1,7 @@
 import 'package:customizable_counter/customizable_counter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lunch_box/coupon/select_coupon_page.dart';
 import 'package:lunch_box/model/app_user.dart';
 import 'package:lunch_box/model/combo.dart';
 import 'package:lunch_box/model/menu.dart';
@@ -123,15 +124,16 @@ class _OrderPageState extends ConsumerState<OrderPage> {
   }
 
   Future<dynamic> navToConfirmOrder(BuildContext context) {
+    AppUser appUser = ref.read(authProvider);
     if (ref.read(orderProvider).fireStoreId.isNotEmpty) {
-      AppUser appUser = ref.read(authProvider);
       ref.read(orderProvider.notifier).saveOrder(
           "ConfirmOrder",
           ref.read(orderProvider).fireStoreId,
           appUser.phoneNumber,
           appUser.uId);
     } else {
-      ref.read(orderProvider.notifier).firstTimeSave("ConfirmOrder");
+      ref.read(orderProvider.notifier).firstTimeSaveWithUid(
+          "ConfirmOrder", appUser.phoneNumber, appUser.uId);
     }
     return Navigator.of(context)
         .push(MaterialPageRoute(builder: (ctx) => const OrderDetailPage()));
@@ -177,7 +179,13 @@ class _OrderPageState extends ConsumerState<OrderPage> {
           children: [
             Text("Discount:",
                 style: TextStyle(color: Theme.of(context).disabledColor)),
-            TextButton(onPressed: () {}, child: const Text("Change coupon")),
+            TextButton(
+                onPressed: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (ctx) => SelectCouponPage(
+                          ref.watch(orderProvider).couponApplied!)));
+                },
+                child: const Text("Change coupon")),
             const Spacer(),
             Text(
               ref.watch(orderProvider).couponApplied!.isAmount
@@ -411,7 +419,7 @@ class _OrderPageState extends ConsumerState<OrderPage> {
                         height: 5,
                       ),
                       SizedBox(
-                        width: 200,
+                        width: 150,
                         child: Text(
                           customThaliDescription,
                           softWrap: true,

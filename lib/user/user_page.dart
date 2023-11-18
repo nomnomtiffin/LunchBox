@@ -54,7 +54,9 @@ class UserPage extends ConsumerWidget {
                                 selectedPage: 1,
                               )),
                       (route) => false);
-                  await ref.read(orderProvider.notifier).updateCoupon(appUser);
+                  await ref
+                      .read(orderProvider.notifier)
+                      .updateCoupon(appUser, null);
                 },
                 child: const Text('Sign Out'),
               ),

@@ -28,7 +28,7 @@ class _CouponListPageState extends ConsumerState<CouponListPage> {
   void getData() async {
     AppUser appUser = ref.read(authProvider);
     List<AppCoupon> loadCoupons =
-        await ref.read(couponListProvider.notifier).loadCoupons(appUser);
+        await ref.read(couponListProvider.notifier).loadCoupons(appUser, false);
 
     setState(() {
       coupons = loadCoupons;

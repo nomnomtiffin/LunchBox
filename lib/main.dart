@@ -28,19 +28,21 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'nom nom - Lunch Box',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.orange,
-          primary: Colors.orange,
-        ),
-        elevatedButtonTheme: ElevatedButtonThemeData(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.orange, // background (button) color
-            foregroundColor: Theme.of(context)
-                .colorScheme
-                .onPrimary, // foreground (text) color
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: Colors.orange,
+            primary: Colors.orange,
           ),
-        ),
-      ),
+          elevatedButtonTheme: ElevatedButtonThemeData(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.orange, // background (button) color
+              foregroundColor: Theme.of(context)
+                  .colorScheme
+                  .onPrimary, // foreground (text) color
+            ),
+          ),
+          appBarTheme: AppBarTheme(
+              backgroundColor: Colors.orange,
+              foregroundColor: Theme.of(context).colorScheme.onPrimary)),
       home: const Tabs(selectedPage: 0),
     );
   }

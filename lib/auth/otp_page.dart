@@ -133,7 +133,7 @@ class _OtpPageState extends ConsumerState<OtpPage> {
             }
             await ref
                 .read(orderProvider.notifier)
-                .updateCoupon(ref.read(authProvider));
+                .updateCoupon(ref.read(authProvider), null);
             ref.read(authProvider.notifier).stopLoading();
             Navigator.of(context).pushAndRemoveUntil(
                 MaterialPageRoute(
